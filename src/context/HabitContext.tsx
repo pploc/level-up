@@ -5,14 +5,21 @@ import { SyncConfig, SyncStatus, UserAccount } from '../types/sync';
 import { calculateHabitStreak } from '../utils/streak';
 import { calculateProgression } from '../utils/levelingMath';
 import { getLocalDateString } from '../utils/date';
-import { triggerLevelUpConfetti, triggerTaskConfetti } from '../utils/confetti';
-import { generateSeedLogs, INITIAL_HABITS } from '../constants/initialData';
+import { INITIAL_HABITS } from '../constants/initialData';
+
+export interface ShowcaseEvent {
+  id: string;
+  message: string;
+  subMessage: string;
+  mood: MascotMood;
+}
 
 interface HabitContextValue {
   habits: HabitWithStreak[];
   logs: Record<string, HabitLog>;
   progression: UserProgression;
   mascotMood: MascotMood;
+  showcaseEvent: ShowcaseEvent | null;
   syncStatus: SyncStatus;
   syncConfig: SyncConfig;
   user: UserAccount | null;
@@ -85,6 +92,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [mascotMood, setMascotMood] = useState<MascotMood>('neutral');
+  const [showcaseEvent, setShowcaseEvent] = useState<ShowcaseEvent | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
   const debounceTimerRef = useRef<any>(null);
   const isFirstMount = useRef(true);
@@ -203,7 +211,6 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setSyncStatus('syncing');
     try {
       const workerUrl = syncConfig.workerUrl.replace(/\/$/, '');
-      // Check if account already exists
       const checkRes = await fetch(`${workerUrl}/api/sync`, {
         method: 'GET',
         headers: { 'Authorization': `Bearer ${cleanToken}` }
@@ -214,7 +221,6 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         return { success: false, error: 'Account already exists. Use Sign In instead.' };
       }
 
-      // Fresh Level 1 state (default starter habits, 0 XP, no seed logs)
       const freshHabits = INITIAL_HABITS;
       const freshLogs = {};
       const freshXp = 0;
@@ -278,9 +284,18 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [habits, logs, totalXp, syncConfig.autoSync, syncConfig.workerUrl, effectiveToken, performRemoteSync]);
 
-  const triggerMood = useCallback((mood: MascotMood, durationMs = 3500) => {
+  const triggerShowcase = useCallback((message: string, subMessage: string, mood: MascotMood = 'happy', durationMs = 2000) => {
     setMascotMood(mood);
-    setTimeout(() => setMascotMood('neutral'), durationMs);
+    setShowcaseEvent({
+      id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      message,
+      subMessage,
+      mood
+    });
+    setTimeout(() => {
+      setShowcaseEvent(null);
+      setMascotMood('neutral');
+    }, durationMs);
   }, []);
 
   const toggleHabit = useCallback((habitId: string, dateStr = selectedDate) => {
@@ -309,16 +324,14 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const prevLevel = calculateProgression(prev).level;
         const nextLevel = calculateProgression(nextXp).level;
         if (nextLevel > prevLevel) {
-          triggerMood('celebrating', 6000);
-          triggerLevelUpConfetti();
+          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 2500);
         } else {
-          triggerMood('happy', 3000);
-          triggerTaskConfetti();
+          triggerShowcase('ACTIVITY CHECKED!', `${targetHabit.title} • +25 XP ☕`, 'happy', 1800);
         }
         return nextXp;
       });
     }
-  }, [habits, logs, selectedDate, triggerMood]);
+  }, [habits, logs, selectedDate, triggerShowcase]);
 
   const updateNumericValue = useCallback((habitId: string, value: number, dateStr = selectedDate) => {
     const key = `${habitId}_${dateStr}`;
@@ -347,16 +360,14 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         const prevLevel = calculateProgression(prev).level;
         const nextLevel = calculateProgression(nextXp).level;
         if (nextLevel > prevLevel) {
-          triggerMood('celebrating', 6000);
-          triggerLevelUpConfetti();
+          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 2500);
         } else {
-          triggerMood('happy', 3000);
-          triggerTaskConfetti();
+          triggerShowcase('GOAL COMPLETED!', `${targetHabit.title} • +25 XP ☕`, 'happy', 1800);
         }
         return nextXp;
       });
     }
-  }, [habits, logs, selectedDate, triggerMood]);
+  }, [habits, logs, selectedDate, triggerShowcase]);
 
   const habitsWithStreaks: HabitWithStreak[] = habits.map(h => {
     const todayLog = logs[`${h.id}_${selectedDate}`];
@@ -378,7 +389,6 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEYS.HABITS, JSON.stringify(INITIAL_HABITS));
     localStorage.setItem(STORAGE_KEYS.XP, '0');
 
-    // If user logged in or sync configured, push Level 1 reset directly to R2
     if (syncConfig.workerUrl && effectiveToken) {
       const payload = {
         version: 2,
@@ -407,10 +417,8 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const loadDemoData = () => {
     setHabits(INITIAL_HABITS);
-    const demoLogs = generateSeedLogs(INITIAL_HABITS);
-    setLogs(demoLogs);
-    const completedCount = Object.values(demoLogs).filter(l => l.completed).length;
-    setTotalXp(completedCount * 25);
+    setLogs({});
+    setTotalXp(0);
   };
 
   return (
@@ -420,6 +428,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         logs,
         progression,
         mascotMood,
+        showcaseEvent,
         syncStatus,
         syncConfig,
         user,

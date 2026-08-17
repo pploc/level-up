@@ -7,11 +7,14 @@ import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { MascotSanctum } from './components/mascot/MascotSanctum';
 import { SettingsModal } from './components/settings/SettingsModal';
 import { AuthModal } from './components/auth/AuthModal';
+import { MascotCenterShowcase } from './components/mascot/MascotCenterShowcase';
+import { useHabits } from './context/HabitContext';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('habits');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const { showcaseEvent, progression } = useHabits();
 
   return (
     <div className="min-h-screen bg-game-grid text-white flex flex-col relative overflow-hidden">
@@ -19,6 +22,16 @@ export const App: React.FC = () => {
       <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-flame-600/25 via-flame-500/10 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
       <div className="fixed top-1/3 -left-32 w-80 h-80 bg-flame-600/15 rounded-full blur-3xl pointer-events-none z-0" />
       <div className="fixed bottom-10 -right-32 w-96 h-96 bg-flame-500/15 rounded-full blur-3xl pointer-events-none z-0" />
+
+      {/* Center Screen Mascot Celebration Showcase */}
+      {showcaseEvent && (
+        <MascotCenterShowcase
+          stage={progression.stage}
+          mood={showcaseEvent.mood}
+          message={showcaseEvent.message}
+          subMessage={showcaseEvent.subMessage}
+        />
+      )}
 
       {/* Main Glass Layout Container */}
       <div className="relative z-10 flex flex-col min-h-screen">

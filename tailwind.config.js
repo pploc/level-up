@@ -37,8 +37,21 @@ export default {
         'mascot-happy': 'mascotHappy 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate',
         'mascot-celebrate': 'mascotCelebrate 0.8s ease-in-out infinite',
         'mascot-wiggle': 'mascotWiggle 0.4s ease-in-out infinite',
+        'center-hero': 'centerHero 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'fade-in': 'fadeIn 0.25s ease-out forwards',
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        centerHero: {
+          '0%': { opacity: '0', transform: 'scale(0.3) translateY(60px) rotate(-15deg)' },
+          '25%': { opacity: '1', transform: 'scale(1.25) translateY(-10px) rotate(5deg)' },
+          '50%': { opacity: '1', transform: 'scale(1.15) translateY(0px) rotate(-3deg)' },
+          '75%': { opacity: '1', transform: 'scale(1.18) translateY(-4px) rotate(2deg)' },
+          '100%': { opacity: '1', transform: 'scale(1.1) translateY(0px) rotate(0deg)' },
+        },
         idleFloat: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-6px)' },
