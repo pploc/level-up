@@ -20,7 +20,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onChangeTab }
     <>
       {/* Top Navbar on Desktop / Tablet */}
       <nav className="max-w-6xl mx-auto px-4 mt-4 mb-6 hidden sm:block">
-        <div className="flex items-center gap-1.5 p-1 bg-obsidian-900 border border-obsidian-700 rounded-xl overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1.5 glass-panel rounded-2xl overflow-x-auto">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -29,10 +29,10 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onChangeTab }
                 key={tab.id}
                 type="button"
                 onClick={() => onChangeTab(tab.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
                   isActive
-                    ? 'bg-flame-600 text-white shadow-md shadow-flame-600/30'
-                    : 'text-zinc-400 hover:text-white hover:bg-obsidian-800'
+                    ? 'bg-flame-600 text-white shadow-lg shadow-flame-600/30 border border-flame-400/30'
+                    : 'text-zinc-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-zinc-500'}`} />
@@ -44,7 +44,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onChangeTab }
       </nav>
 
       {/* Mobile Fixed Bottom Navigation Bar */}
-      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian-950/95 backdrop-blur-lg border-t border-obsidian-800 px-2 py-1.5 flex justify-around">
+      <nav className="sm:hidden fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-white/10 px-2 py-1.5 flex justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -53,7 +53,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, onChangeTab }
               key={tab.id}
               type="button"
               onClick={() => onChangeTab(tab.id)}
-              className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-lg text-[10px] font-bold transition-all ${
+              className={`flex flex-col items-center gap-0.5 py-1 px-3 rounded-xl text-[10px] font-bold transition-all ${
                 isActive ? 'text-flame-400' : 'text-zinc-500'
               }`}
             >

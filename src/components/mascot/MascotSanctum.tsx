@@ -13,7 +13,7 @@ export const MascotSanctum: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Current Mascot Stage Hero Card */}
-      <div className="relative overflow-hidden p-6 bg-gradient-to-b from-obsidian-800 to-obsidian-900 border border-flame-500/40 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
+      <div className="relative overflow-hidden p-6 glass-panel border border-flame-500/40 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">
           <div className="flex items-center gap-2 px-3 py-1 bg-flame-600/20 text-flame-400 border border-flame-500/30 rounded-full text-xs font-bold mb-3">
             <Sparkles className="w-3.5 h-3.5" />
@@ -43,7 +43,7 @@ export const MascotSanctum: React.FC = () => {
         </div>
 
         {/* Large Animated Mascot */}
-        <div className="p-4 bg-obsidian-950/80 rounded-2xl border border-obsidian-700">
+        <div className="p-4 bg-black/50 rounded-2xl border border-white/10 backdrop-blur-md">
           <MascotDisplay
             stage={progression.stage}
             mood={mascotMood}
@@ -55,7 +55,7 @@ export const MascotSanctum: React.FC = () => {
       </div>
 
       {/* Evolution Tiers Roadmap */}
-      <div className="p-5 bg-obsidian-900 border border-obsidian-700 rounded-xl">
+      <div className="p-5 glass-panel rounded-2xl">
         <h3 className="font-bold text-white text-base mb-4">Evolution Roadmap</h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
@@ -69,10 +69,10 @@ export const MascotSanctum: React.FC = () => {
                 key={stageKey}
                 className={`p-4 rounded-xl border flex flex-col items-center text-center transition-all ${
                   isCurrent
-                    ? 'bg-flame-600/15 border-flame-500 shadow-[0_0_15px_rgba(255,87,34,0.3)]'
+                    ? 'bg-flame-600/20 border-flame-500 shadow-[0_0_15px_rgba(255,87,34,0.3)] backdrop-blur-md'
                     : isUnlocked
-                    ? 'bg-obsidian-800 border-obsidian-700'
-                    : 'bg-obsidian-950 border-obsidian-800 opacity-50 grayscale'
+                    ? 'glass-subcard'
+                    : 'bg-black/40 border-white/5 opacity-40 grayscale backdrop-blur-sm'
                 }`}
               >
                 <div className="text-[10px] font-mono font-bold text-zinc-500 mb-2 uppercase">

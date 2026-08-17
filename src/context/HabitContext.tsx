@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { Habit, HabitLog, HabitWithStreak } from '../types/habit';
 import { MascotMood, UserProgression } from '../types/mascot';
 import { SyncConfig, SyncStatus } from '../types/sync';
@@ -53,19 +53,27 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [totalXp, setTotalXp] = useState<number>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.XP);
     if (raw) return Number(raw);
-    // Calculate initial XP based on seeded logs
     const completedCount = Object.values(generateSeedLogs(INITIAL_HABITS)).filter(l => l.completed).length;
     return completedCount * 25;
   });
 
   const [syncConfig, setSyncConfig] = useState<SyncConfig>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
-    return raw ? JSON.parse(raw) : { workerUrl: '', authToken: '', autoSync: false, lastSyncTime: null };
+    return raw
+      ? JSON.parse(raw)
+      : {
+          workerUrl: 'https://level-up-sync.aribrabeta.workers.dev',
+          authToken: '',
+          autoSync: true,
+          lastSyncTime: null
+        };
   });
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
   const [mascotMood, setMascotMood] = useState<MascotMood>('neutral');
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
+  const debounceTimerRef = useRef<any>(null);
+  const isFirstMount = useRef(true);
 
   const progression = calculateProgression(totalXp);
 
@@ -85,6 +93,59 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(syncConfig));
   }, [syncConfig]);
+
+  const performRemoteSync = useCallback(async () => {
+    if (!syncConfig.workerUrl || !syncConfig.authToken) return;
+    setSyncStatus('syncing');
+
+    try {
+      const payload = {
+        version: 2,
+        exportedAt: new Date().toISOString(),
+        habits,
+        logs,
+        totalXp,
+        progression
+      };
+
+      const res = await fetch(`${syncConfig.workerUrl.replace(/\/$/, '')}/api/sync`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${syncConfig.authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) throw new Error(`Sync failed: ${res.statusText}`);
+
+      setSyncStatus('success');
+      setSyncConfig(prev => ({ ...prev, lastSyncTime: new Date().toISOString() }));
+      setTimeout(() => setSyncStatus('idle'), 2500);
+    } catch {
+      setSyncStatus('error');
+      setTimeout(() => setSyncStatus('idle'), 3500);
+    }
+  }, [syncConfig, habits, logs, totalXp, progression]);
+
+  // Debounced auto-save on state mutation
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+
+    if (syncConfig.autoSync && syncConfig.workerUrl && syncConfig.authToken) {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = setTimeout(() => {
+        performRemoteSync();
+      }, 1500);
+    }
+
+    return () => {
+      if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
+    };
+  }, [habits, logs, totalXp, syncConfig.autoSync, syncConfig.workerUrl, syncConfig.authToken, performRemoteSync]);
 
   const triggerMood = useCallback((mood: MascotMood, durationMs = 3500) => {
     setMascotMood(mood);
@@ -166,40 +227,6 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [habits, logs, selectedDate, triggerMood]);
 
-  const triggerManualSync = async () => {
-    if (!syncConfig.workerUrl || !syncConfig.authToken) return;
-    setSyncStatus('syncing');
-
-    try {
-      const payload = {
-        version: 2,
-        exportedAt: new Date().toISOString(),
-        habits,
-        logs,
-        totalXp,
-        progression
-      };
-
-      const res = await fetch(`${syncConfig.workerUrl.replace(/\/$/, '')}/api/sync`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${syncConfig.authToken}`
-        },
-        body: JSON.stringify(payload)
-      });
-
-      if (!res.ok) throw new Error(`Sync failed: ${res.statusText}`);
-
-      setSyncStatus('success');
-      setSyncConfig(prev => ({ ...prev, lastSyncTime: new Date().toISOString() }));
-      setTimeout(() => setSyncStatus('idle'), 3000);
-    } catch {
-      setSyncStatus('error');
-      setTimeout(() => setSyncStatus('idle'), 4000);
-    }
-  };
-
   const habitsWithStreaks: HabitWithStreak[] = habits.map(h => {
     const todayLog = logs[`${h.id}_${selectedDate}`];
     const streak = calculateHabitStreak(h.id, logs, h.customDays, selectedDate);
@@ -252,7 +279,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateHabit: (updated) => setHabits(prev => prev.map(h => h.id === updated.id ? updated : h)),
         deleteHabit: (id) => setHabits(prev => prev.filter(h => h.id !== id)),
         updateSyncConfig: (cfg) => setSyncConfig(prev => ({ ...prev, ...cfg })),
-        triggerManualSync,
+        triggerManualSync: performRemoteSync,
         exportJson: () => JSON.stringify({ version: 2, habits, logs, totalXp, exportedAt: new Date().toISOString() }, null, 2),
         importJson: (jsonStr: string) => {
           try {

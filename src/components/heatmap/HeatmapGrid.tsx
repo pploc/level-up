@@ -7,14 +7,14 @@ export const HeatmapGrid: React.FC = () => {
   const { habits, logs, setSelectedDate } = useHabits();
 
   const getCellColor = (level: number = 0, color?: string) => {
-    if (level === 0) return 'bg-[#141414] border-[#1F1F1F] hover:border-[#383838]';
+    if (level === 0) return 'bg-[#141414]/70 border-[#262626]/50 hover:border-white/30';
     if (color) return 'border-transparent';
     switch (level) {
       case 1: return 'bg-[#4D1C0C] border-[#662610]';
       case 2: return 'bg-[#8A2E0E] border-[#A83812]';
       case 3: return 'bg-[#D84315] border-[#F4511E]';
-      case 4: return 'bg-[#FF7A00] border-[#FF9100] shadow-[0_0_6px_rgba(255,122,0,0.6)]';
-      default: return 'bg-[#141414] border-[#1F1F1F]';
+      case 4: return 'bg-[#FF7A00] border-[#FF9100] shadow-[0_0_8px_rgba(255,122,0,0.6)]';
+      default: return 'bg-[#141414]/70 border-[#262626]/50';
     }
   };
 
@@ -93,7 +93,7 @@ export const HeatmapGrid: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Overall Aggregated Heatmap */}
-      <div className="p-5 bg-obsidian-900 border border-obsidian-700 rounded-xl space-y-3">
+      <div className="p-5 glass-panel rounded-2xl space-y-3">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-bold text-white text-base">Combined Activity Grid</h2>
@@ -119,14 +119,14 @@ export const HeatmapGrid: React.FC = () => {
 
         <div className="grid grid-cols-1 gap-4">
           {activeHabits.map((habit) => (
-            <div key={habit.id} className="p-4 bg-obsidian-900 border border-obsidian-700 rounded-xl space-y-2">
+            <div key={habit.id} className="p-4 glass-card rounded-2xl space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: habit.color }} />
                   <span className="font-bold text-white text-sm">{habit.title}</span>
                   <span
                     className="text-[10px] px-1.5 py-0.2 rounded font-mono uppercase"
-                    style={{ backgroundColor: `${habit.color}20`, color: habit.color }}
+                    style={{ backgroundColor: `${habit.color}25`, color: habit.color }}
                   >
                     {habit.category}
                   </span>

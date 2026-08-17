@@ -18,10 +18,10 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
     : habit.completedToday ? 100 : 0;
 
   return (
-    <div className="relative group p-3 sm:p-4 bg-obsidian-900 border border-obsidian-700 hover:border-obsidian-600 rounded-xl transition-all">
+    <div className="relative group p-3 sm:p-4 glass-card hover:border-flame-500/30 rounded-2xl transition-all">
       {/* Background Progress Glow Bar */}
       <div
-        className="absolute left-0 bottom-0 top-0 w-1 bg-flame-500/80 rounded-l-xl transition-all"
+        className="absolute left-0 bottom-0 top-0 w-1 bg-flame-500/80 rounded-l-2xl transition-all"
         style={{
           height: `${progressPercent}%`,
           backgroundColor: habit.completedToday ? '#FF7A00' : habit.color
@@ -36,8 +36,8 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
             onClick={() => toggleHabit(habit.id, selectedDate)}
             className={`w-9 h-9 shrink-0 rounded-xl border flex items-center justify-center transition-all ${
               habit.completedToday
-                ? 'bg-flame-600 border-flame-500 text-white shadow-[0_0_10px_rgba(255,87,34,0.6)]'
-                : 'bg-obsidian-800 border-obsidian-600 text-transparent hover:border-flame-500/50'
+                ? 'bg-flame-600 border-flame-500 text-white shadow-[0_0_12px_rgba(255,87,34,0.6)]'
+                : 'bg-black/40 border-white/10 text-transparent hover:border-flame-500/50'
             }`}
           >
             <Check className={`w-5 h-5 transition-transform ${habit.completedToday ? 'scale-100' : 'scale-75'}`} />
@@ -50,7 +50,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
               </h3>
               <span
                 className="text-[10px] px-1.5 py-0.2 rounded font-mono font-bold uppercase shrink-0"
-                style={{ backgroundColor: `${habit.color}20`, color: habit.color }}
+                style={{ backgroundColor: `${habit.color}25`, color: habit.color }}
               >
                 {habit.category}
               </span>
@@ -65,7 +65,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
         <div className="flex items-center justify-between sm:justify-end gap-2 pl-12 sm:pl-0">
           {/* Numeric Stepper if Applicable */}
           {isNumeric && (
-            <div className="flex items-center gap-1 bg-obsidian-800 border border-obsidian-700 px-2 py-1 rounded-lg text-xs">
+            <div className="flex items-center gap-1 bg-black/40 border border-white/10 px-2 py-1 rounded-xl text-xs backdrop-blur-md">
               <button
                 type="button"
                 onClick={() => updateNumericValue(habit.id, habit.todayValue - 1, selectedDate)}
@@ -88,7 +88,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
 
           {/* Streak Flame Counter */}
           <div
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-obsidian-800 border border-obsidian-700 text-xs font-bold text-flame-400 shrink-0"
+            className="flex items-center gap-1 px-2 py-1 rounded-xl bg-black/40 border border-white/10 text-xs font-bold text-flame-400 shrink-0 backdrop-blur-md"
             title={`Current streak: ${habit.streak.currentStreak} days`}
           >
             <Flame className="w-3.5 h-3.5 fill-flame-500 text-flame-500" />
@@ -99,7 +99,7 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit }) => {
           <button
             type="button"
             onClick={() => setShowGrid(!showGrid)}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-obsidian-800"
+            className="p-1.5 text-zinc-400 hover:text-white rounded-lg hover:bg-white/10"
             title={showGrid ? "Hide grid" : "Show grid"}
           >
             {showGrid ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}

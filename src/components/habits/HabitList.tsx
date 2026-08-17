@@ -29,13 +29,13 @@ export const HabitList: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Date Bar & Completion Overview */}
-      <div className="p-4 bg-obsidian-900 border border-obsidian-700 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-4 glass-panel rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4">
         {/* Date Selector */}
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={handlePrevDay}
-            className="p-1.5 bg-obsidian-800 border border-obsidian-700 rounded-lg hover:text-flame-400 text-zinc-400 transition-colors"
+            className="p-1.5 bg-black/40 border border-white/10 rounded-lg hover:text-flame-400 text-zinc-400 hover:border-flame-500/30 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
@@ -55,7 +55,7 @@ export const HabitList: React.FC = () => {
           <button
             type="button"
             onClick={handleNextDay}
-            className="p-1.5 bg-obsidian-800 border border-obsidian-700 rounded-lg hover:text-flame-400 text-zinc-400 transition-colors"
+            className="p-1.5 bg-black/40 border border-white/10 rounded-lg hover:text-flame-400 text-zinc-400 hover:border-flame-500/30 transition-colors"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -75,7 +75,7 @@ export const HabitList: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsCreateOpen(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 bg-flame-600 hover:bg-flame-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30 transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-flame-600 hover:bg-flame-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30 border border-flame-400/30 transition-all"
           >
             <Plus className="w-4 h-4" />
             New Habit
@@ -88,12 +88,12 @@ export const HabitList: React.FC = () => {
         {activeHabits.length > 0 ? (
           activeHabits.map(habit => <HabitCard key={habit.id} habit={habit} />)
         ) : (
-          <div className="text-center py-12 bg-obsidian-900 border border-dashed border-obsidian-700 rounded-xl">
+          <div className="text-center py-12 glass-panel border-dashed border-white/10 rounded-2xl">
             <p className="text-zinc-400 text-sm font-medium mb-3">No habits configured yet.</p>
             <button
               type="button"
               onClick={() => setIsCreateOpen(true)}
-              className="px-4 py-2 bg-flame-600 text-white font-bold text-xs rounded-lg"
+              className="px-4 py-2 bg-flame-600 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30"
             >
               Create your first habit
             </button>

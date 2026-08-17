@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Cloud, Download, Upload, Trash2, Database } from 'lucide-react';
+import { X, Cloud, Download, Upload, Trash2, Database, ShieldCheck } from 'lucide-react';
 import { useHabits } from '../../context/HabitContext';
 
 interface SettingsModalProps {
@@ -19,11 +19,16 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
 
   const [workerUrl, setWorkerUrl] = useState(syncConfig.workerUrl);
   const [authToken, setAuthToken] = useState(syncConfig.authToken);
+  const [autoSync, setAutoSync] = useState(syncConfig.autoSync ?? true);
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
   const handleSaveSync = (e: React.FormEvent) => {
     e.preventDefault();
-    updateSyncConfig({ workerUrl: workerUrl.trim(), authToken: authToken.trim() });
+    updateSyncConfig({
+      workerUrl: workerUrl.trim(),
+      authToken: authToken.trim(),
+      autoSync
+    });
     triggerManualSync();
   };
 
@@ -56,20 +61,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-      <div className="w-full max-w-lg bg-obsidian-900 border border-obsidian-700 rounded-2xl p-6 shadow-2xl space-y-6">
-        <div className="flex items-center justify-between pb-4 border-b border-obsidian-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div className="w-full max-w-lg glass-panel rounded-3xl p-6 shadow-2xl space-y-6 border border-white/10">
+        <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Cloud className="w-5 h-5 text-flame-500" />
             Storage & Cloudflare R2 Sync
           </h2>
-          <button type="button" onClick={onClose} className="text-zinc-500 hover:text-white">
+          <button type="button" onClick={onClose} className="text-zinc-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Cloudflare Worker R2 Sync Form */}
-        <form onSubmit={handleSaveSync} className="space-y-3">
+        <form onSubmit={handleSaveSync} className="space-y-4">
           <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
             Cloudflare Worker Endpoint
           </h3>
@@ -80,7 +85,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
               placeholder="https://level-up-sync.your-subdomain.workers.dev"
               value={workerUrl}
               onChange={e => setWorkerUrl(e.target.value)}
-              className="w-full px-3 py-2 bg-obsidian-800 border border-obsidian-700 rounded-xl text-white text-xs focus:border-flame-500 outline-none"
+              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-white text-xs focus:border-flame-500 outline-none backdrop-blur-sm"
             />
           </div>
 
@@ -91,20 +96,39 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
               placeholder="Your custom sync passphrase or token"
               value={authToken}
               onChange={e => setAuthToken(e.target.value)}
-              className="w-full px-3 py-2 bg-obsidian-800 border border-obsidian-700 rounded-xl text-white text-xs focus:border-flame-500 outline-none"
+              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-white text-xs focus:border-flame-500 outline-none backdrop-blur-sm"
             />
           </div>
 
+          {/* Auto-sync toggle */}
+          <label className="flex items-center gap-2.5 p-3 rounded-xl bg-black/30 border border-white/5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={autoSync}
+              onChange={e => setAutoSync(e.target.checked)}
+              className="w-4 h-4 rounded accent-flame-500 cursor-pointer"
+            />
+            <div className="text-xs">
+              <div className="font-semibold text-white flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-flame-400" />
+                Auto-save changes to Cloudflare R2
+              </div>
+              <div className="text-zinc-400 text-[11px]">
+                Silently syncs habit checks and XP in the background
+              </div>
+            </div>
+          </label>
+
           <button
             type="submit"
-            className="w-full py-2 bg-flame-600 hover:bg-flame-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30"
+            className="w-full py-2 bg-flame-600 hover:bg-flame-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30 border border-flame-400/30 transition-all"
           >
             Save & Sync to R2
           </button>
         </form>
 
         {/* Local JSON Backup & Restore */}
-        <div className="pt-4 border-t border-obsidian-700 space-y-3">
+        <div className="pt-4 border-t border-white/10 space-y-3">
           <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
             JSON Backup & Restore
           </h3>
@@ -112,13 +136,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             <button
               type="button"
               onClick={handleExport}
-              className="flex-1 flex items-center justify-center gap-2 py-2 bg-obsidian-800 hover:bg-obsidian-700 text-zinc-300 font-semibold text-xs rounded-xl border border-obsidian-700"
+              className="flex-1 flex items-center justify-center gap-2 py-2 bg-black/40 hover:bg-white/5 text-zinc-300 font-semibold text-xs rounded-xl border border-white/10 transition-all"
             >
               <Download className="w-4 h-4" />
               Export JSON
             </button>
 
-            <label className="flex-1 flex items-center justify-center gap-2 py-2 bg-obsidian-800 hover:bg-obsidian-700 text-zinc-300 font-semibold text-xs rounded-xl border border-obsidian-700 cursor-pointer">
+            <label className="flex-1 flex items-center justify-center gap-2 py-2 bg-black/40 hover:bg-white/5 text-zinc-300 font-semibold text-xs rounded-xl border border-white/10 cursor-pointer transition-all">
               <Upload className="w-4 h-4" />
               Import JSON
               <input type="file" accept=".json" onChange={handleFileImport} className="hidden" />
@@ -131,11 +155,11 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
         </div>
 
         {/* Demo & Danger Controls */}
-        <div className="pt-4 border-t border-obsidian-700 flex justify-between gap-3">
+        <div className="pt-4 border-t border-white/10 flex justify-between gap-3">
           <button
             type="button"
             onClick={loadDemoData}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-obsidian-800 hover:bg-obsidian-700 text-zinc-400 hover:text-white text-xs rounded-lg border border-obsidian-700 font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-black/40 hover:bg-white/5 text-zinc-400 hover:text-white text-xs rounded-xl border border-white/10 font-medium transition-all"
           >
             <Database className="w-3.5 h-3.5" />
             Load Sample Data
@@ -149,7 +173,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
                 onClose();
               }
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-400 text-xs rounded-lg border border-red-900/50 font-medium"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-400 text-xs rounded-xl border border-red-900/50 font-medium transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Reset Data
