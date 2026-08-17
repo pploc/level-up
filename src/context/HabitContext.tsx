@@ -37,11 +37,11 @@ interface HabitContextValue {
 const HabitContext = createContext<HabitContextValue | null>(null);
 
 const STORAGE_KEYS = {
-  HABITS: 'levelup_habits_v2',
-  LOGS: 'levelup_logs_v2',
-  CONFIG: 'levelup_config_v2',
-  XP: 'levelup_xp_v2',
-  USER: 'levelup_user_v2',
+  HABITS: 'levelup_habits_v3',
+  LOGS: 'levelup_logs_v3',
+  CONFIG: 'levelup_config_v3',
+  XP: 'levelup_xp_v3',
+  USER: 'levelup_user_v3',
 };
 
 export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -52,14 +52,12 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const [logs, setLogs] = useState<Record<string, HabitLog>>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.LOGS);
-    return raw ? JSON.parse(raw) : generateSeedLogs(INITIAL_HABITS);
+    return raw ? JSON.parse(raw) : {};
   });
 
   const [totalXp, setTotalXp] = useState<number>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.XP);
-    if (raw) return Number(raw);
-    const completedCount = Object.values(generateSeedLogs(INITIAL_HABITS)).filter(l => l.completed).length;
-    return completedCount * 25;
+    return raw ? Number(raw) : 0;
   });
 
   const [user, setUser] = useState<UserAccount | null>(() => {
