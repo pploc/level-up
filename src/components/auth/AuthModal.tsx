@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LogIn, Sparkles, AlertCircle, RefreshCw } from 'lucide-react';
+import { LogIn, UserPlus, Sparkles, AlertCircle, RefreshCw, X } from 'lucide-react';
 import { useHabits } from '../../context/HabitContext';
 
 interface AuthModalProps {
@@ -8,7 +8,8 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
-  const { login, syncStatus } = useHabits();
+  const { login, signup, syncStatus } = useHabits();
+  const [mode, setMode] = useState<'login' | 'signup'>('signup');
   const [username, setUsername] = useState('');
   const [passphrase, setPassphrase] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -18,34 +19,73 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username.trim() || !passphrase.trim()) {
-      setError('Please enter both username and sync passphrase');
+      setError('Please enter both username and password.');
       return;
     }
 
-    // Token derived from username and user's chosen secret passphrase
     const token = `${username.trim().toLowerCase()}_${passphrase.trim()}`;
-    const ok = await login(username.trim(), token);
-    if (ok) {
+    const result = mode === 'signup'
+      ? await signup(username.trim(), token)
+      : await login(username.trim(), token);
+
+    if (result.success) {
       setError(null);
       onClose();
     } else {
-      setError('Login failed. Please check credentials.');
+      setError(result.error || 'Operation failed.');
     }
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <div className="w-full max-w-md glass-panel rounded-3xl p-6 shadow-2xl space-y-6 border border-white/10 relative">
-        <div className="text-center space-y-2">
+      <div className="w-full max-w-md glass-panel rounded-3xl p-6 shadow-2xl space-y-5 border border-white/10 relative">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 text-zinc-400 hover:text-white"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
+        {/* Header */}
+        <div className="text-center space-y-1">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-flame-600/20 text-flame-500 border border-flame-500/30 mb-1">
-            <LogIn className="w-6 h-6" />
+            {mode === 'signup' ? <UserPlus className="w-6 h-6" /> : <LogIn className="w-6 h-6" />}
           </div>
           <h2 className="text-xl font-black text-white tracking-wide">
-            Sign In / Sync Account
+            {mode === 'signup' ? 'Create New Account' : 'Welcome Back'}
           </h2>
           <p className="text-xs text-zinc-400">
-            Enter your username and sync passphrase to restore or save your habit progress.
+            {mode === 'signup'
+              ? 'Start fresh at Level 1 with full cloud synchronization.'
+              : 'Sign in to restore your existing habit progress and streaks.'}
           </p>
+        </div>
+
+        {/* Tab Switcher */}
+        <div className="flex p-1 bg-black/40 border border-white/10 rounded-xl">
+          <button
+            type="button"
+            onClick={() => { setMode('signup'); setError(null); }}
+            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              mode === 'signup'
+                ? 'bg-flame-600 text-white shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            Sign Up (Fresh Lv. 1)
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode('login'); setError(null); }}
+            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              mode === 'login'
+                ? 'bg-flame-600 text-white shadow-md'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            Sign In (Restore)
+          </button>
         </div>
 
         {error && (
@@ -72,12 +112,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
           <div>
             <label className="block text-xs font-semibold text-zinc-300 mb-1">
-              Passphrase / Password
+              Password / Passphrase
             </label>
             <input
               type="password"
               required
-              placeholder="Your secret sync passphrase"
+              placeholder="Your secret passphrase"
               value={passphrase}
               onChange={e => setPassphrase(e.target.value)}
               className="w-full px-3.5 py-2.5 bg-black/40 border border-white/10 rounded-xl text-white text-xs focus:border-flame-500 outline-none backdrop-blur-sm"
@@ -92,24 +132,29 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
             {syncStatus === 'syncing' ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Syncing Cloud Data...</span>
+                <span>Connecting to Cloudflare R2...</span>
+              </>
+            ) : mode === 'signup' ? (
+              <>
+                <Sparkles className="w-4 h-4" />
+                <span>Create Account (Start Lv. 1)</span>
               </>
             ) : (
               <>
-                <Sparkles className="w-4 h-4" />
-                <span>Log In & Sync Data</span>
+                <LogIn className="w-4 h-4" />
+                <span>Sign In & Restore</span>
               </>
             )}
           </button>
         </form>
 
-        <div className="pt-2 text-center">
+        <div className="text-center">
           <button
             type="button"
             onClick={onClose}
             className="text-xs text-zinc-400 hover:text-white transition-colors"
           >
-            Continue as Guest (Local Only)
+            Continue as Guest (Local Demo Only)
           </button>
         </div>
       </div>

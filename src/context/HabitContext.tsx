@@ -24,7 +24,8 @@ interface HabitContextValue {
   updateHabit: (habit: Habit) => void;
   deleteHabit: (habitId: string) => void;
   updateSyncConfig: (config: Partial<SyncConfig>) => void;
-  login: (username: string, token: string) => Promise<boolean>;
+  login: (username: string, token: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (username: string, token: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   triggerManualSync: () => Promise<void>;
   exportJson: () => string;
@@ -153,10 +154,10 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [syncConfig, effectiveToken, habits, logs, totalXp, progression]);
 
-  const login = async (username: string, token: string): Promise<boolean> => {
+  const login = async (username: string, token: string): Promise<{ success: boolean; error?: string }> => {
     const cleanUser = username.trim();
     const cleanToken = token.trim();
-    if (!cleanUser || !cleanToken) return false;
+    if (!cleanUser || !cleanToken) return { success: false, error: 'Username and passphrase required' };
 
     setSyncStatus('syncing');
     try {
@@ -168,52 +169,90 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
       });
 
-      const accountObj: UserAccount = {
-        username: cleanUser,
-        token: cleanToken,
-        isLoggedIn: true
-      };
-
       if (res.ok) {
         const data = await res.json();
         if (data.habits) setHabits(data.habits);
         if (data.logs) setLogs(data.logs);
         if (typeof data.totalXp === 'number') setTotalXp(data.totalXp);
-      } else if (res.status === 404) {
-        // New account on R2 - save initial local state
-        await fetch(`${workerUrl}/api/sync`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${cleanToken}`
-          },
-          body: JSON.stringify({
-            version: 2,
-            exportedAt: new Date().toISOString(),
-            habits,
-            logs,
-            totalXp,
-            progression
-          })
-        });
+
+        const accountObj: UserAccount = { username: cleanUser, token: cleanToken, isLoggedIn: true };
+        setUser(accountObj);
+        setSyncConfig(prev => ({ ...prev, authToken: cleanToken, lastSyncTime: new Date().toISOString() }));
+        setSyncStatus('success');
+        setTimeout(() => setSyncStatus('idle'), 2000);
+        return { success: true };
       }
 
+      if (res.status === 404) {
+        setSyncStatus('idle');
+        return { success: false, error: 'Account not found. Click "Create New Account" below.' };
+      }
+
+      setSyncStatus('error');
+      setTimeout(() => setSyncStatus('idle'), 2000);
+      return { success: false, error: 'Authentication failed. Please check credentials.' };
+    } catch {
+      setSyncStatus('idle');
+      return { success: false, error: 'Cannot connect to server. Check connection.' };
+    }
+  };
+
+  const signup = async (username: string, token: string): Promise<{ success: boolean; error?: string }> => {
+    const cleanUser = username.trim();
+    const cleanToken = token.trim();
+    if (!cleanUser || !cleanToken) return { success: false, error: 'Username and passphrase required' };
+
+    setSyncStatus('syncing');
+    try {
+      const workerUrl = syncConfig.workerUrl.replace(/\/$/, '');
+      // Check if account already exists
+      const checkRes = await fetch(`${workerUrl}/api/sync`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${cleanToken}` }
+      });
+
+      if (checkRes.ok) {
+        setSyncStatus('idle');
+        return { success: false, error: 'Account already exists. Use Sign In instead.' };
+      }
+
+      // Fresh Level 1 state (default starter habits, 0 XP, no seed logs)
+      const freshHabits = INITIAL_HABITS;
+      const freshLogs = {};
+      const freshXp = 0;
+      const freshProgression = calculateProgression(0);
+
+      setHabits(freshHabits);
+      setLogs(freshLogs);
+      setTotalXp(freshXp);
+
+      const payload = {
+        version: 2,
+        exportedAt: new Date().toISOString(),
+        habits: freshHabits,
+        logs: freshLogs,
+        totalXp: freshXp,
+        progression: freshProgression
+      };
+
+      await fetch(`${workerUrl}/api/sync`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cleanToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const accountObj: UserAccount = { username: cleanUser, token: cleanToken, isLoggedIn: true };
       setUser(accountObj);
       setSyncConfig(prev => ({ ...prev, authToken: cleanToken, lastSyncTime: new Date().toISOString() }));
       setSyncStatus('success');
       setTimeout(() => setSyncStatus('idle'), 2000);
-      return true;
+      return { success: true };
     } catch {
-      // Offline login fallback
-      const accountObj: UserAccount = {
-        username: cleanUser,
-        token: cleanToken,
-        isLoggedIn: true
-      };
-      setUser(accountObj);
-      setSyncConfig(prev => ({ ...prev, authToken: cleanToken }));
       setSyncStatus('idle');
-      return true;
+      return { success: false, error: 'Failed to create account. Check connection.' };
     }
   };
 
@@ -375,6 +414,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         deleteHabit: (id) => setHabits(prev => prev.filter(h => h.id !== id)),
         updateSyncConfig: (cfg) => setSyncConfig(prev => ({ ...prev, ...cfg })),
         login,
+        signup,
         logout,
         triggerManualSync: performRemoteSync,
         exportJson: () => JSON.stringify({ version: 2, habits, logs, totalXp, exportedAt: new Date().toISOString() }, null, 2),
