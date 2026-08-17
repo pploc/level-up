@@ -34,7 +34,12 @@ jobs:
         run: npm run build
 
       - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          cd dist
+          git init
+          git checkout -b gh-pages
+          git add -A
+          git commit -m "deploy: automated build $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          git push -f https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git gh-pages
