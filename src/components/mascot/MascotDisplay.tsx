@@ -38,10 +38,10 @@ export const MascotDisplay: React.FC<MascotDisplayProps> = ({
 
   const moodAnimation = useMemo(() => {
     switch (mood) {
-      case 'happy': return 'scale-110 -translate-y-2';
-      case 'celebrating': return 'animate-bounce scale-110';
-      case 'sad': return 'translate-y-1 opacity-75 grayscale-[30%]';
-      case 'determined': return 'scale-105';
+      case 'happy': return 'animate-mascot-happy filter drop-shadow-[0_0_15px_rgba(255,122,0,0.8)]';
+      case 'celebrating': return 'animate-mascot-celebrate filter drop-shadow-[0_0_25px_rgba(255,87,34,1)]';
+      case 'sad': return 'translate-y-1 opacity-75 grayscale-[40%]';
+      case 'determined': return 'animate-pulse-glow scale-105';
       default: return 'animate-idle-float';
     }
   }, [mood]);

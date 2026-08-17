@@ -34,6 +34,9 @@ export default {
         'idle-float': 'idleFloat 3s ease-in-out infinite',
         'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
         'flame-flicker': 'flameFlicker 1.5s ease-in-out infinite alternate',
+        'mascot-happy': 'mascotHappy 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) infinite alternate',
+        'mascot-celebrate': 'mascotCelebrate 0.8s ease-in-out infinite',
+        'mascot-wiggle': 'mascotWiggle 0.4s ease-in-out infinite',
       },
       keyframes: {
         idleFloat: {
@@ -47,6 +50,21 @@ export default {
         flameFlicker: {
           '0%': { transform: 'scale(1) rotate(-1deg)' },
           '100%': { transform: 'scale(1.05) rotate(1deg)' },
+        },
+        mascotHappy: {
+          '0%': { transform: 'translateY(0) scale(1) rotate(0deg)' },
+          '50%': { transform: 'translateY(-12px) scale(1.15) rotate(6deg)' },
+          '100%': { transform: 'translateY(-4px) scale(1.1) rotate(-6deg)' },
+        },
+        mascotCelebrate: {
+          '0%, 100%': { transform: 'translateY(0) scale(1) rotate(0deg)' },
+          '25%': { transform: 'translateY(-18px) scale(1.25) rotate(-10deg)' },
+          '50%': { transform: 'translateY(-8px) scale(1.2) rotate(10deg)' },
+          '75%': { transform: 'translateY(-14px) scale(1.22) rotate(-5deg)' },
+        },
+        mascotWiggle: {
+          '0%, 100%': { transform: 'rotate(-8deg)' },
+          '50%': { transform: 'rotate(8deg)' },
         }
       }
     },
