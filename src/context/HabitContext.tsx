@@ -330,6 +330,9 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
         return nextXp;
       });
+    } else if (existing?.completed) {
+      // Deduct XP when unchecking
+      setTotalXp(prev => Math.max(0, prev - 25));
     }
   }, [habits, logs, selectedDate, triggerShowcase]);
 
@@ -366,6 +369,8 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         }
         return nextXp;
       });
+    } else if (wasCompleted && !isCompleted) {
+      setTotalXp(prev => Math.max(0, prev - 25));
     }
   }, [habits, logs, selectedDate, triggerShowcase]);
 
