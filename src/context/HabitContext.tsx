@@ -370,10 +370,39 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const resetAllData = () => {
-    setHabits([]);
+    setHabits(INITIAL_HABITS);
     setLogs({});
     setTotalXp(0);
-    localStorage.clear();
+    localStorage.removeItem(STORAGE_KEYS.LOGS);
+    localStorage.removeItem(STORAGE_KEYS.XP);
+    localStorage.setItem(STORAGE_KEYS.HABITS, JSON.stringify(INITIAL_HABITS));
+    localStorage.setItem(STORAGE_KEYS.XP, '0');
+
+    // If user logged in or sync configured, push Level 1 reset directly to R2
+    if (syncConfig.workerUrl && effectiveToken) {
+      const payload = {
+        version: 2,
+        exportedAt: new Date().toISOString(),
+        habits: INITIAL_HABITS,
+        logs: {},
+        totalXp: 0,
+        progression: calculateProgression(0)
+      };
+
+      fetch(`${syncConfig.workerUrl.replace(/\/$/, '')}/api/sync`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${effectiveToken}`
+        },
+        body: JSON.stringify(payload)
+      }).then(() => {
+        setSyncStatus('success');
+        setTimeout(() => setSyncStatus('idle'), 2000);
+      }).catch(() => {
+        setSyncStatus('idle');
+      });
+    }
   };
 
   const loadDemoData = () => {

@@ -168,7 +168,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
           <button
             type="button"
             onClick={() => {
-              if (window.confirm('Reset all local habit data? This cannot be undone.')) {
+              if (window.confirm('Reset this account to Level 1 with 0 XP? This will sync to Cloudflare R2 immediately.')) {
                 resetAllData();
                 onClose();
               }
@@ -176,7 +176,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
             className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/40 hover:bg-red-900/60 text-red-400 text-xs rounded-xl border border-red-900/50 font-medium transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
-            Reset Data
+            Reset Account to Lv. 1
           </button>
         </div>
       </div>
