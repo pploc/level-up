@@ -6,3 +6,9 @@ export interface SyncConfig {
 }
 
 export type SyncStatus = 'idle' | 'syncing' | 'success' | 'error';
+
+export interface UserAccount {
+  username: string;
+  token: string;
+  isLoggedIn: boolean;
+}

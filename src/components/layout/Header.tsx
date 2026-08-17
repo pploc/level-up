@@ -1,14 +1,15 @@
 import React from 'react';
-import { Flame, Shield, RefreshCw, Settings as SettingsIcon } from 'lucide-react';
+import { Flame, Shield, RefreshCw, Settings as SettingsIcon, LogIn, LogOut, User } from 'lucide-react';
 import { useHabits } from '../../context/HabitContext';
 import { MascotDisplay } from '../mascot/MascotDisplay';
 
 interface HeaderProps {
   onOpenSettings: () => void;
+  onOpenAuth: () => void;
 }
 
-export const Header: React.FC<HeaderProps> = ({ onOpenSettings }) => {
-  const { progression, mascotMood, syncStatus, triggerManualSync } = useHabits();
+export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) => {
+  const { progression, mascotMood, syncStatus, triggerManualSync, user, logout } = useHabits();
 
   return (
     <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10">
@@ -50,6 +51,32 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings }) => {
 
         {/* Action Controls */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* User Account / Login Button */}
+          {user ? (
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/40 border border-white/10 text-xs text-zinc-300 backdrop-blur-md">
+              <User className="w-3.5 h-3.5 text-flame-400" />
+              <span className="font-semibold text-white truncate max-w-[80px] sm:max-w-[120px]">{user.username}</span>
+              <button
+                type="button"
+                onClick={logout}
+                className="ml-1 text-zinc-500 hover:text-red-400"
+                title="Log out"
+              >
+                <LogOut className="w-3 h-3" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onOpenAuth}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-flame-600/20 border border-flame-500/40 text-flame-400 hover:bg-flame-600 hover:text-white text-xs font-bold transition-all shadow-md shadow-flame-600/10"
+              title="Sign In / Sync Account"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign In</span>
+            </button>
+          )}
+
           {/* Streak Freeze Badge */}
           <div
             className="flex items-center gap-1 px-2 py-1 rounded-lg bg-black/40 border border-white/10 text-xs font-medium text-zinc-300 backdrop-blur-md"

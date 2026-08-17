@@ -6,10 +6,12 @@ import { HeatmapGrid } from './components/heatmap/HeatmapGrid';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { MascotSanctum } from './components/mascot/MascotSanctum';
 import { SettingsModal } from './components/settings/SettingsModal';
+import { AuthModal } from './components/auth/AuthModal';
 
 export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('habits');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-game-grid text-white flex flex-col relative overflow-hidden">
@@ -20,7 +22,10 @@ export const App: React.FC = () => {
 
       {/* Main Glass Layout Container */}
       <div className="relative z-10 flex flex-col min-h-screen">
-        <Header onOpenSettings={() => setIsSettingsOpen(true)} />
+        <Header
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenAuth={() => setIsAuthOpen(true)}
+        />
         <Navigation activeTab={activeTab} onChangeTab={setActiveTab} />
 
         <main className="flex-1 max-w-6xl w-full mx-auto px-4 pb-20 sm:pb-16">
@@ -32,6 +37,7 @@ export const App: React.FC = () => {
       </div>
 
       {isSettingsOpen && <SettingsModal onClose={() => setIsSettingsOpen(false)} />}
+      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
     </div>
   );
 };

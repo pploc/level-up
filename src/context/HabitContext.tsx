@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { Habit, HabitLog, HabitWithStreak } from '../types/habit';
 import { MascotMood, UserProgression } from '../types/mascot';
-import { SyncConfig, SyncStatus } from '../types/sync';
+import { SyncConfig, SyncStatus, UserAccount } from '../types/sync';
 import { calculateHabitStreak } from '../utils/streak';
 import { calculateProgression } from '../utils/levelingMath';
 import { getLocalDateString } from '../utils/date';
@@ -15,6 +15,7 @@ interface HabitContextValue {
   mascotMood: MascotMood;
   syncStatus: SyncStatus;
   syncConfig: SyncConfig;
+  user: UserAccount | null;
   selectedDate: string;
   setSelectedDate: (date: string) => void;
   toggleHabit: (habitId: string, date?: string) => void;
@@ -23,6 +24,8 @@ interface HabitContextValue {
   updateHabit: (habit: Habit) => void;
   deleteHabit: (habitId: string) => void;
   updateSyncConfig: (config: Partial<SyncConfig>) => void;
+  login: (username: string, token: string) => Promise<boolean>;
+  logout: () => void;
   triggerManualSync: () => Promise<void>;
   exportJson: () => string;
   importJson: (jsonStr: string) => boolean;
@@ -37,6 +40,7 @@ const STORAGE_KEYS = {
   LOGS: 'levelup_logs_v2',
   CONFIG: 'levelup_config_v2',
   XP: 'levelup_xp_v2',
+  USER: 'levelup_user_v2',
 };
 
 export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -57,16 +61,27 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return completedCount * 25;
   });
 
+  const [user, setUser] = useState<UserAccount | null>(() => {
+    const raw = localStorage.getItem(STORAGE_KEYS.USER);
+    return raw ? JSON.parse(raw) : null;
+  });
+
   const [syncConfig, setSyncConfig] = useState<SyncConfig>(() => {
     const raw = localStorage.getItem(STORAGE_KEYS.CONFIG);
-    return raw
-      ? JSON.parse(raw)
-      : {
-          workerUrl: 'https://level-up-sync.aribrabeta.workers.dev',
-          authToken: '',
-          autoSync: true,
-          lastSyncTime: null
-        };
+    const defaultUrl = 'https://level-up-sync.aribrabeta.workers.dev';
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return {
+        ...parsed,
+        workerUrl: parsed.workerUrl || defaultUrl,
+      };
+    }
+    return {
+      workerUrl: defaultUrl,
+      authToken: '',
+      autoSync: true,
+      lastSyncTime: null
+    };
   });
 
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle');
@@ -94,8 +109,18 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEYS.CONFIG, JSON.stringify(syncConfig));
   }, [syncConfig]);
 
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(STORAGE_KEYS.USER);
+    }
+  }, [user]);
+
+  const effectiveToken = user?.token || syncConfig.authToken;
+
   const performRemoteSync = useCallback(async () => {
-    if (!syncConfig.workerUrl || !syncConfig.authToken) return;
+    if (!syncConfig.workerUrl || !effectiveToken) return;
     setSyncStatus('syncing');
 
     try {
@@ -112,7 +137,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${syncConfig.authToken}`
+          'Authorization': `Bearer ${effectiveToken}`
         },
         body: JSON.stringify(payload)
       });
@@ -126,7 +151,76 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setSyncStatus('error');
       setTimeout(() => setSyncStatus('idle'), 3500);
     }
-  }, [syncConfig, habits, logs, totalXp, progression]);
+  }, [syncConfig, effectiveToken, habits, logs, totalXp, progression]);
+
+  const login = async (username: string, token: string): Promise<boolean> => {
+    const cleanUser = username.trim();
+    const cleanToken = token.trim();
+    if (!cleanUser || !cleanToken) return false;
+
+    setSyncStatus('syncing');
+    try {
+      const workerUrl = syncConfig.workerUrl.replace(/\/$/, '');
+      const res = await fetch(`${workerUrl}/api/sync`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${cleanToken}`
+        }
+      });
+
+      const accountObj: UserAccount = {
+        username: cleanUser,
+        token: cleanToken,
+        isLoggedIn: true
+      };
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.habits) setHabits(data.habits);
+        if (data.logs) setLogs(data.logs);
+        if (typeof data.totalXp === 'number') setTotalXp(data.totalXp);
+      } else if (res.status === 404) {
+        // New account on R2 - save initial local state
+        await fetch(`${workerUrl}/api/sync`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${cleanToken}`
+          },
+          body: JSON.stringify({
+            version: 2,
+            exportedAt: new Date().toISOString(),
+            habits,
+            logs,
+            totalXp,
+            progression
+          })
+        });
+      }
+
+      setUser(accountObj);
+      setSyncConfig(prev => ({ ...prev, authToken: cleanToken, lastSyncTime: new Date().toISOString() }));
+      setSyncStatus('success');
+      setTimeout(() => setSyncStatus('idle'), 2000);
+      return true;
+    } catch {
+      // Offline login fallback
+      const accountObj: UserAccount = {
+        username: cleanUser,
+        token: cleanToken,
+        isLoggedIn: true
+      };
+      setUser(accountObj);
+      setSyncConfig(prev => ({ ...prev, authToken: cleanToken }));
+      setSyncStatus('idle');
+      return true;
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    setSyncConfig(prev => ({ ...prev, authToken: '' }));
+  };
 
   // Debounced auto-save on state mutation
   useEffect(() => {
@@ -135,7 +229,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return;
     }
 
-    if (syncConfig.autoSync && syncConfig.workerUrl && syncConfig.authToken) {
+    if (syncConfig.autoSync && syncConfig.workerUrl && effectiveToken) {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
       debounceTimerRef.current = setTimeout(() => {
         performRemoteSync();
@@ -145,7 +239,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => {
       if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     };
-  }, [habits, logs, totalXp, syncConfig.autoSync, syncConfig.workerUrl, syncConfig.authToken, performRemoteSync]);
+  }, [habits, logs, totalXp, syncConfig.autoSync, syncConfig.workerUrl, effectiveToken, performRemoteSync]);
 
   const triggerMood = useCallback((mood: MascotMood, durationMs = 3500) => {
     setMascotMood(mood);
@@ -262,6 +356,7 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         mascotMood,
         syncStatus,
         syncConfig,
+        user,
         selectedDate,
         setSelectedDate,
         toggleHabit,
@@ -279,6 +374,8 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateHabit: (updated) => setHabits(prev => prev.map(h => h.id === updated.id ? updated : h)),
         deleteHabit: (id) => setHabits(prev => prev.filter(h => h.id !== id)),
         updateSyncConfig: (cfg) => setSyncConfig(prev => ({ ...prev, ...cfg })),
+        login,
+        logout,
         triggerManualSync: performRemoteSync,
         exportJson: () => JSON.stringify({ version: 2, habits, logs, totalXp, exportedAt: new Date().toISOString() }, null, 2),
         importJson: (jsonStr: string) => {
