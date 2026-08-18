@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
-import { Habit, HabitLog, HabitWithStreak } from '../types/habit';
-import { MascotMood, UserProgression } from '../types/mascot';
+import { Habit, HabitLog, HabitWithStreak, HabitCategory } from '../types/habit';
+import { MascotMood, UserProgression, MascotActionType } from '../types/mascot';
 import { SyncConfig, SyncStatus, UserAccount } from '../types/sync';
 import { calculateHabitStreak } from '../utils/streak';
 import { calculateProgression } from '../utils/levelingMath';
@@ -12,6 +12,21 @@ export interface ShowcaseEvent {
   message: string;
   subMessage: string;
   mood: MascotMood;
+  action: MascotActionType;
+}
+
+const CATEGORY_ACTION_MAP: Record<HabitCategory, MascotActionType[]> = {
+  fitness: ['push_up', 'bicep_flex', 'dumbbell_press'],
+  learning: ['reading_book', 'laptop_coding'],
+  productivity: ['laptop_coding', 'coffee_sip'],
+  mindset: ['zen_meditate'],
+  health: ['water_chug', 'coffee_sip'],
+  other: ['celebrate_jump', 'coffee_sip']
+};
+
+function getRandomActionForCategory(category: HabitCategory = 'other'): MascotActionType {
+  const pool = CATEGORY_ACTION_MAP[category] || CATEGORY_ACTION_MAP.other;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 interface HabitContextValue {
@@ -284,13 +299,14 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [habits, logs, totalXp, syncConfig.autoSync, syncConfig.workerUrl, effectiveToken, performRemoteSync]);
 
-  const triggerShowcase = useCallback((message: string, subMessage: string, mood: MascotMood = 'happy', durationMs = 2000) => {
+  const triggerShowcase = useCallback((message: string, subMessage: string, mood: MascotMood = 'happy', action: MascotActionType = 'coffee_sip', durationMs = 2200) => {
     setMascotMood(mood);
     setShowcaseEvent({
       id: `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
       message,
       subMessage,
-      mood
+      mood,
+      action
     });
     setTimeout(() => {
       setShowcaseEvent(null);
@@ -319,14 +335,16 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     if (willBeCompleted) {
       const addedXp = 25;
+      const categoryAction = getRandomActionForCategory(targetHabit.category);
+
       setTotalXp(prev => {
         const nextXp = prev + addedXp;
         const prevLevel = calculateProgression(prev).level;
         const nextLevel = calculateProgression(nextXp).level;
         if (nextLevel > prevLevel) {
-          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 2500);
+          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 'celebrate_jump', 2600);
         } else {
-          triggerShowcase('ACTIVITY CHECKED!', `${targetHabit.title} • +25 XP ☕`, 'happy', 1800);
+          triggerShowcase('ACTIVITY CHECKED!', `${targetHabit.title} • +25 XP`, 'happy', categoryAction, 2000);
         }
         return nextXp;
       });
@@ -358,14 +376,15 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setLogs(prev => ({ ...prev, [key]: newLog }));
 
     if (!wasCompleted && isCompleted) {
+      const categoryAction = getRandomActionForCategory(targetHabit.category);
       setTotalXp(prev => {
         const nextXp = prev + 25;
         const prevLevel = calculateProgression(prev).level;
         const nextLevel = calculateProgression(nextXp).level;
         if (nextLevel > prevLevel) {
-          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 2500);
+          triggerShowcase(`LEVEL UP! LV. ${nextLevel}`, `Gopher reached ${calculateProgression(nextXp).stageConfig.title}! ☕`, 'celebrating', 'celebrate_jump', 2600);
         } else {
-          triggerShowcase('GOAL COMPLETED!', `${targetHabit.title} • +25 XP ☕`, 'happy', 1800);
+          triggerShowcase('GOAL COMPLETED!', `${targetHabit.title} • +25 XP`, 'happy', categoryAction, 2000);
         }
         return nextXp;
       });

@@ -28,6 +28,7 @@ export const App: React.FC = () => {
         <MascotCenterShowcase
           stage={progression.stage}
           mood={showcaseEvent.mood}
+          action={showcaseEvent.action}
           message={showcaseEvent.message}
           subMessage={showcaseEvent.subMessage}
         />
