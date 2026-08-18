@@ -1,5 +1,6 @@
 import React from 'react';
 import { MascotMood } from '../../../types/mascot';
+import { JAVA_LOGO_DATA_URI } from '../javaLogoData';
 
 export const EmberSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, size = 100 }) => {
   const isHappy = mood === 'happy' || mood === 'celebrating';
@@ -9,9 +10,9 @@ export const EmberSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, 
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="emberGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FF7A00" stopOpacity="0.9" />
-          <stop offset="70%" stopColor="#FF5722" stopOpacity="0.5" />
-          <stop offset="100%" stopColor="#D84315" stopOpacity="0" />
+          <stop offset="0%" stopColor="#00ADD8" stopOpacity="0.9" />
+          <stop offset="70%" stopColor="#00838F" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#004D40" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="gopherBodyGradEmber" x1="50" y1="10" x2="50" y2="82" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFA726" />
@@ -23,8 +24,8 @@ export const EmberSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, 
       <circle cx="50" cy="48" r="46" fill="url(#emberGlow)" />
 
       {/* Flame Tufts behind ears */}
-      <path d="M 22 18 C 12 6 16 0 22 4 C 24 10 26 16 27 22 Z" fill="#FFD54F" stroke="#FFFFFF" strokeWidth="1" />
-      <path d="M 78 18 C 88 6 84 0 78 4 C 76 10 74 16 73 22 Z" fill="#FFD54F" stroke="#FFFFFF" strokeWidth="1" />
+      <path d="M 22 18 C 12 6 16 0 22 4 C 24 10 26 16 27 22 Z" fill="#4DD0E1" stroke="#FFFFFF" strokeWidth="1" />
+      <path d="M 78 18 C 88 6 84 0 78 4 C 76 10 74 16 73 22 Z" fill="#4DD0E1" stroke="#FFFFFF" strokeWidth="1" />
 
       {/* Gopher Ears */}
       <circle cx="25" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -76,26 +77,30 @@ export const EmberSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, 
       <circle cx="24" cy="40" r="3.8" fill="#FF5722" opacity="0.6" />
       <circle cx="76" cy="40" r="3.8" fill="#FF5722" opacity="0.6" />
 
-      {/* Clear Java Mug in Ember Theme */}
-      <path d="M 68 59 C 77 59 77 75 68 75" stroke="#FF7A00" strokeWidth="3.2" strokeLinecap="round" fill="none" />
+      {/* Mug Handle */}
+      <path d="M 68 59 C 78 59 78 75 68 75" stroke="#00ADD8" strokeWidth="3.2" strokeLinecap="round" fill="none" />
       <path
         d="M 32 54 L 68 54 L 64 80 C 64 83 61 86 57 86 L 43 86 C 39 86 36 83 36 80 Z"
         fill="#18181B"
-        stroke="#FF7A00"
+        stroke="#00ADD8"
         strokeWidth="1.8"
       />
-      <ellipse cx="50" cy="54" rx="17" ry="3" fill="#3F2B1D" stroke="#FF7A00" strokeWidth="1.2" />
+      <ellipse cx="50" cy="54" rx="17" ry="3" fill="#3F2B1D" stroke="#00ADD8" strokeWidth="1.2" />
 
-      {/* Clear Java Logo */}
-      <path d="M 47 64 C 45 61 49 59 47 57 C 51 60 49 63 47 64 Z" fill="#FF5722" />
-      <path d="M 52 64 C 50 60 55 58 53 56 C 57 59 55 63 52 64 Z" fill="#FF7A00" />
-      <path d="M 44 69 C 47 71 53 71 56 69 C 54 70 46 70 44 69 Z" fill="#38BDF8" stroke="#38BDF8" strokeWidth="0.8" />
-      <path d="M 42 74 C 47 76 53 76 58 74 C 55 75 45 75 42 74 Z" fill="#38BDF8" stroke="#38BDF8" strokeWidth="0.8" />
+      {/* High Resolution Java Logo */}
+      <image
+        href={JAVA_LOGO_DATA_URI}
+        x="38"
+        y="58"
+        width="24"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+      />
 
       {/* Steam */}
-      <path d="M 44 50 Q 40 44 45 40" stroke="#FFE082" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <path d="M 50 49 Q 54 43 49 38" stroke="#FFB74D" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <path d="M 56 50 Q 60 44 55 39" stroke="#FFE082" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M 44 50 Q 40 44 45 40" stroke="#E0F7FA" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M 50 49 Q 54 43 49 38" stroke="#4DD0E1" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <path d="M 56 50 Q 60 44 55 39" stroke="#E0F7FA" strokeWidth="1.8" strokeLinecap="round" fill="none" />
 
       {/* Paws */}
       <circle cx="31" cy="65" r="5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.4" />

@@ -3,52 +3,52 @@ import { MascotStage, MascotStageConfig, UserProgression } from '../types/mascot
 export const STAGE_CONFIGS: Record<MascotStage, MascotStageConfig> = {
   novice: {
     stage: 'novice',
-    name: 'Ignis Emberling',
-    title: 'Novice Spark',
+    name: 'Gopher Initiate',
+    title: 'Coffee Novice',
     minLevel: 1,
     maxLevel: 4,
-    description: 'A young fire wisp eager to grow through steady discipline.',
-    glowColor: '#FF7A00',
-    accentColor: '#FFA726'
+    description: 'A cheerful orange Go Gopher starting the day with fresh Java coffee.',
+    glowColor: '#00ADD8',
+    accentColor: '#29B6F6'
   },
   ember: {
     stage: 'ember',
-    name: 'Ignis Pyro',
-    title: 'Flame Sprite',
+    name: 'Gopher Caffeinated',
+    title: 'Java Adept',
     minLevel: 5,
     maxLevel: 9,
-    description: 'Growing stronger with twin flame crests and sharper focus.',
-    glowColor: '#FF5722',
-    accentColor: '#FFD54F'
+    description: 'Growing energized with dual espresso shots and disciplined focus.',
+    glowColor: '#00ADD8',
+    accentColor: '#4DD0E1'
   },
   knight: {
     stage: 'knight',
-    name: 'Ignis Valiant',
-    title: 'Blaze Knight',
+    name: 'Gopher Paladin',
+    title: 'Obsidian Knight',
     minLevel: 10,
     maxLevel: 19,
-    description: 'Clad in obsidian armor, tempered by unbroken consistency.',
-    glowColor: '#FF5722',
+    description: 'Clad in sleek knight armor, powered by uninterrupted consistency.',
+    glowColor: '#0097A7',
     accentColor: '#FFFFFF'
   },
   solar_champion: {
     stage: 'solar_champion',
-    name: 'Ignis Sol',
-    title: 'Solar Champion',
+    name: 'Gopher Solar Champion',
+    title: 'Solar Gopher',
     minLevel: 20,
     maxLevel: 34,
-    description: 'Surrounded by solar halos and radiant blazing wings.',
-    glowColor: '#FF9800',
+    description: 'Surrounded by radiant azure halos and transcendent wings.',
+    glowColor: '#00ADD8',
     accentColor: '#FFD700'
   },
   ascendant: {
     stage: 'ascendant',
-    name: 'Ignis Ascendant',
-    title: 'Solar Deity',
+    name: 'Gopher Ascendant',
+    title: 'Cosmic Grandmaster',
     minLevel: 35,
     maxLevel: 999,
-    description: 'Transcendent phoenix deity radiating limitless habit mastery.',
-    glowColor: '#E040FB',
+    description: 'Transcendent deity radiating limitless mastery and infinite coffee brew.',
+    glowColor: '#00E5FF',
     accentColor: '#FFFFFF'
   }
 };

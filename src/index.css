@@ -19,9 +19,9 @@ body {
 .bg-game-grid {
   background-color: #050505;
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(255, 87, 34, 0.18) 0%, transparent 65%),
-    radial-gradient(circle at 100% 100%, rgba(255, 122, 0, 0.1) 0%, transparent 45%),
-    radial-gradient(circle at 0% 50%, rgba(255, 87, 34, 0.08) 0%, transparent 40%);
+    radial-gradient(circle at 50% 0%, rgba(0, 173, 216, 0.18) 0%, transparent 65%),
+    radial-gradient(circle at 100% 100%, rgba(0, 140, 180, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 0% 50%, rgba(0, 173, 216, 0.08) 0%, transparent 40%);
   background-size: 100% 100%, 100% 100%, 100% 100%;
 }
 
@@ -63,5 +63,5 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #FF5722;
+  background: #00ADD8;
 }

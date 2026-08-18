@@ -1,5 +1,6 @@
 import React from 'react';
 import { MascotMood } from '../../../types/mascot';
+import { JAVA_LOGO_DATA_URI } from '../javaLogoData';
 
 export const KnightSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, size = 100 }) => {
   const isHappy = mood === 'happy' || mood === 'celebrating';
@@ -8,7 +9,7 @@ export const KnightSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="knightAura" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FF5722" stopOpacity="0.85" />
+          <stop offset="0%" stopColor="#00ADD8" stopOpacity="0.85" />
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="gopherBodyGradKnight" x1="50" y1="10" x2="50" y2="82" gradientUnits="userSpaceOnUse">
@@ -21,8 +22,8 @@ export const KnightSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
       <circle cx="50" cy="48" r="46" fill="url(#knightAura)" />
 
       {/* Knight Plume */}
-      <path d="M 50 2 C 56 10 58 16 50 22 C 42 16 44 10 50 2 Z" fill="#FF5722" stroke="#FFFFFF" strokeWidth="0.8" />
-      <path d="M 50 6 C 53 12 54 16 50 20 C 46 16 47 12 50 6 Z" fill="#FFD54F" />
+      <path d="M 50 2 C 56 10 58 16 50 22 C 42 16 44 10 50 2 Z" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="0.8" />
+      <path d="M 50 6 C 53 12 54 16 50 20 C 46 16 47 12 50 6 Z" fill="#80DEEA" />
 
       {/* Gopher Ears */}
       <circle cx="25" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -42,7 +43,7 @@ export const KnightSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
       <path
         d="M 28 24 C 40 20 60 20 72 24 L 70 32 C 60 30 40 30 30 32 Z"
         fill="#1F2937"
-        stroke="#FF7A00"
+        stroke="#00ADD8"
         strokeWidth="1.2"
       />
 
@@ -78,18 +79,22 @@ export const KnightSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
         stroke="#9CA3AF"
         strokeWidth="1.8"
       />
-      <ellipse cx="50" cy="54" rx="17" ry="3" fill="#312E81" stroke="#9CA3AF" strokeWidth="1.2" />
+      <ellipse cx="50" cy="54" rx="17" ry="3" fill="#1E293B" stroke="#9CA3AF" strokeWidth="1.2" />
 
-      {/* Clear Java Logo */}
-      <path d="M 47 64 C 45 61 49 59 47 57 C 51 60 49 63 47 64 Z" fill="#EF4444" />
-      <path d="M 52 64 C 50 60 55 58 53 56 C 57 59 55 63 52 64 Z" fill="#EF4444" />
-      <path d="M 44 69 C 47 71 53 71 56 69 C 54 70 46 70 44 69 Z" fill="#38BDF8" stroke="#38BDF8" strokeWidth="0.8" />
-      <path d="M 42 74 C 47 76 53 76 58 74 C 55 75 45 75 42 74 Z" fill="#38BDF8" stroke="#38BDF8" strokeWidth="0.8" />
+      {/* High Resolution Java Logo */}
+      <image
+        href={JAVA_LOGO_DATA_URI}
+        x="38"
+        y="58"
+        width="24"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
+      />
 
       {/* Steam */}
-      <path d="M 44 50 Q 40 44 45 40" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" fill="none" />
-      <path d="M 50 49 Q 54 43 49 38" stroke="#F97316" strokeWidth="2.2" strokeLinecap="round" fill="none" />
-      <path d="M 56 50 Q 60 44 55 39" stroke="#FDE047" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M 44 50 Q 40 44 45 40" stroke="#80DEEA" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+      <path d="M 50 49 Q 54 43 49 38" stroke="#00ADD8" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+      <path d="M 56 50 Q 60 44 55 39" stroke="#80DEEA" strokeWidth="1.8" strokeLinecap="round" fill="none" />
 
       {/* Paws */}
       <circle cx="31" cy="65" r="5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.4" />

@@ -17,19 +17,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
     loadDemoData
   } = useHabits();
 
-  const [workerUrl, setWorkerUrl] = useState(syncConfig.workerUrl);
-  const [authToken, setAuthToken] = useState(syncConfig.authToken);
   const [autoSync, setAutoSync] = useState(syncConfig.autoSync ?? true);
   const [importStatus, setImportStatus] = useState<string | null>(null);
 
-  const handleSaveSync = (e: React.FormEvent) => {
-    e.preventDefault();
-    updateSyncConfig({
-      workerUrl: workerUrl.trim(),
-      authToken: authToken.trim(),
-      autoSync
-    });
-    triggerManualSync();
+  const handleToggleAutoSync = (checked: boolean) => {
+    setAutoSync(checked);
+    updateSyncConfig({ autoSync: checked });
   };
 
   const handleExport = () => {
@@ -66,71 +59,50 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <h2 className="text-lg font-bold text-white flex items-center gap-2">
             <Cloud className="w-5 h-5 text-flame-500" />
-            Storage & Cloudflare R2 Sync
+            App Settings & Cloud Backup
           </h2>
           <button type="button" onClick={onClose} className="text-zinc-400 hover:text-white">
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Cloudflare Worker R2 Sync Form */}
-        <form onSubmit={handleSaveSync} className="space-y-4">
+        {/* Cloud Sync State */}
+        <div className="space-y-3">
           <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
-            Cloudflare Worker Endpoint
+            Cloud Synchronization
           </h3>
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1">Worker URL</label>
-            <input
-              type="url"
-              placeholder="https://level-up-sync.your-subdomain.workers.dev"
-              value={workerUrl}
-              onChange={e => setWorkerUrl(e.target.value)}
-              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-white text-xs focus:border-flame-500 outline-none backdrop-blur-sm"
-            />
-          </div>
 
-          <div>
-            <label className="block text-xs text-zinc-400 mb-1">Bearer Auth Token</label>
-            <input
-              type="password"
-              placeholder="Your custom sync passphrase or token"
-              value={authToken}
-              onChange={e => setAuthToken(e.target.value)}
-              className="w-full px-3 py-2 bg-black/40 border border-white/10 rounded-xl text-white text-xs focus:border-flame-500 outline-none backdrop-blur-sm"
-            />
-          </div>
-
-          {/* Auto-sync toggle */}
           <label className="flex items-center gap-2.5 p-3 rounded-xl bg-black/30 border border-white/5 cursor-pointer">
             <input
               type="checkbox"
               checked={autoSync}
-              onChange={e => setAutoSync(e.target.checked)}
+              onChange={e => handleToggleAutoSync(e.target.checked)}
               className="w-4 h-4 rounded accent-flame-500 cursor-pointer"
             />
             <div className="text-xs">
               <div className="font-semibold text-white flex items-center gap-1.5">
                 <ShieldCheck className="w-3.5 h-3.5 text-flame-400" />
-                Auto-save changes to Cloudflare R2
+                Automatic Background Cloud Sync
               </div>
               <div className="text-zinc-400 text-[11px]">
-                Silently syncs habit checks and XP in the background
+                Silently syncs habit checks and XP to secure cloud storage
               </div>
             </div>
           </label>
 
           <button
-            type="submit"
+            type="button"
+            onClick={() => triggerManualSync()}
             className="w-full py-2 bg-flame-600 hover:bg-flame-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-flame-600/30 border border-flame-400/30 transition-all"
           >
-            Save & Sync to R2
+            Sync Now
           </button>
-        </form>
+        </div>
 
         {/* Local JSON Backup & Restore */}
         <div className="pt-4 border-t border-white/10 space-y-3">
           <h3 className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
-            JSON Backup & Restore
+            Local Backup & Restore
           </h3>
           <div className="flex gap-3">
             <button
@@ -139,12 +111,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
               className="flex-1 flex items-center justify-center gap-2 py-2 bg-black/40 hover:bg-white/5 text-zinc-300 font-semibold text-xs rounded-xl border border-white/10 transition-all"
             >
               <Download className="w-4 h-4" />
-              Export JSON
+              Export Backup
             </button>
 
             <label className="flex-1 flex items-center justify-center gap-2 py-2 bg-black/40 hover:bg-white/5 text-zinc-300 font-semibold text-xs rounded-xl border border-white/10 cursor-pointer transition-all">
               <Upload className="w-4 h-4" />
-              Import JSON
+              Import Backup
               <input type="file" accept=".json" onChange={handleFileImport} className="hidden" />
             </label>
           </div>
@@ -154,7 +126,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
           )}
         </div>
 
-        {/* Demo & Danger Controls */}
+        {/* Danger Controls */}
         <div className="pt-4 border-t border-white/10 flex justify-between gap-3">
           <button
             type="button"
@@ -168,7 +140,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ onClose }) => {
           <button
             type="button"
             onClick={() => {
-              if (window.confirm('Reset this account to Level 1 with 0 XP? This will sync to Cloudflare R2 immediately.')) {
+              if (window.confirm('Reset this account to Level 1 with 0 XP?')) {
                 resetAllData();
                 onClose();
               }

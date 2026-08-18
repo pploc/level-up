@@ -1,5 +1,6 @@
 import React from 'react';
 import { MascotMood } from '../../../types/mascot';
+import { JAVA_LOGO_DATA_URI } from '../javaLogoData';
 
 export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood, size = 100 }) => {
   const isHappy = mood === 'happy' || mood === 'celebrating';
@@ -9,9 +10,9 @@ export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
     <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="noviceGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FFA726" stopOpacity="0.85" />
-          <stop offset="60%" stopColor="#FF7A00" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="#FF5722" stopOpacity="0" />
+          <stop offset="0%" stopColor="#00ADD8" stopOpacity="0.85" />
+          <stop offset="60%" stopColor="#0097A7" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#006064" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="gopherBodyGrad" x1="50" y1="10" x2="50" y2="82" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#FFA726" />
@@ -20,7 +21,7 @@ export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
         </linearGradient>
       </defs>
 
-      {/* Aura background */}
+      {/* Azure Aura background */}
       <circle cx="50" cy="48" r="46" fill="url(#noviceGlow)" />
 
       {/* Gopher Ears */}
@@ -29,7 +30,7 @@ export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
       <circle cx="75" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
       <circle cx="75" cy="18" r="4.5" fill="#FFE082" />
 
-      {/* Gopher Body (Bigger, filled silhouette) */}
+      {/* Gopher Body */}
       <path
         d="M 50 12 C 72 12 82 22 82 44 C 82 66 78 84 50 84 C 22 84 18 66 18 44 C 18 22 28 12 50 12 Z"
         fill="url(#gopherBodyGrad)"
@@ -76,19 +77,12 @@ export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
       <circle cx="24" cy="40" r="3.8" fill="#FF5722" opacity="0.6" />
       <circle cx="76" cy="40" r="3.8" fill="#FF5722" opacity="0.6" />
 
-      {/* BIG CRISP JAVA COFFEE CUP */}
+      {/* PROMINENT JAVA COFFEE MUG */}
       {/* Mug Handle */}
       <path
-        d="M 68 59 C 77 59 77 75 68 75"
+        d="M 68 59 C 78 59 78 75 68 75"
         stroke="#FFFFFF"
         strokeWidth="3.2"
-        strokeLinecap="round"
-        fill="none"
-      />
-      <path
-        d="M 68 59 C 75 59 75 75 68 75"
-        stroke="#E0E0E0"
-        strokeWidth="1.8"
         strokeLinecap="round"
         fill="none"
       />
@@ -104,47 +98,34 @@ export const NoviceSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mood,
       {/* Coffee Liquid Top Rim */}
       <ellipse cx="50" cy="54" rx="17" ry="3" fill="#4E342E" stroke="#1A1A1A" strokeWidth="1.2" />
 
-      {/* CLEAR ICONIC JAVA LOGO (Red flame on top, Blue saucer/cup base) */}
-      {/* Java Flames */}
-      <path
-        d="M 47 64 C 45 61 49 59 47 57 C 51 60 49 63 47 64 Z"
-        fill="#E53935"
-      />
-      <path
-        d="M 52 64 C 50 60 55 58 53 56 C 57 59 55 63 52 64 Z"
-        fill="#E53935"
-      />
-      <path
-        d="M 44 69 C 47 71 53 71 56 69 C 54 70 46 70 44 69 Z"
-        fill="#0288D1"
-        stroke="#0288D1"
-        strokeWidth="0.8"
-      />
-      <path
-        d="M 42 74 C 47 76 53 76 58 74 C 55 75 45 75 42 74 Z"
-        fill="#0288D1"
-        stroke="#0288D1"
-        strokeWidth="0.8"
+      {/* HIGH RESOLUTION JAVA LOGO EMBED */}
+      <image
+        href={JAVA_LOGO_DATA_URI}
+        x="38"
+        y="58"
+        width="24"
+        height="24"
+        preserveAspectRatio="xMidYMid meet"
       />
 
       {/* Steam Wisps */}
       <path
         d="M 44 50 Q 40 44 45 40"
-        stroke="#FFCC80"
+        stroke="#E0F7FA"
         strokeWidth="1.8"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M 50 49 Q 54 43 49 38"
-        stroke="#FFE082"
+        stroke="#80DEEA"
         strokeWidth="2.2"
         strokeLinecap="round"
         fill="none"
       />
       <path
         d="M 56 50 Q 60 44 55 39"
-        stroke="#FFCC80"
+        stroke="#E0F7FA"
         strokeWidth="1.8"
         strokeLinecap="round"
         fill="none"
