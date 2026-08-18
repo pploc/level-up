@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flame, Shield, RefreshCw, Settings as SettingsIcon, LogIn, LogOut, User } from 'lucide-react';
+import { Flame, Shield, RefreshCw, Settings as SettingsIcon, LogIn, LogOut, User, Zap } from 'lucide-react';
 import { useHabits } from '../../context/HabitContext';
 import { MascotDisplay } from '../mascot/MascotDisplay';
 
@@ -12,38 +12,43 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
   const { progression, mascotMood, syncStatus, triggerManualSync, user, logout } = useHabits();
 
   return (
-    <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10">
+    <header className="sticky top-0 z-40 w-full glass-panel border-b border-white/10 shadow-md">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
         {/* Mascot & Brand */}
-        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <MascotDisplay stage={progression.stage} mood={mascotMood} size={40} className="shrink-0" />
+        <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+          <MascotDisplay stage={progression.stage} mood={mascotMood} size={42} className="shrink-0" />
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <span className="font-black tracking-wider text-white text-base sm:text-lg flex items-center gap-1">
-                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-flame-500 fill-flame-500" />
+                <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-cyan-400 fill-cyan-400" />
                 LEVEL UP
               </span>
-              <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full font-bold bg-flame-600/20 text-flame-400 border border-flame-500/30">
+              <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full font-bold bg-cyan-600/25 text-cyan-300 border border-cyan-500/40">
                 Lv. {progression.level}
               </span>
             </div>
-            <div className="text-[11px] text-zinc-400 font-medium truncate">
-              {progression.stageConfig.title}
+            <div className="text-[11px] text-zinc-400 font-medium truncate flex items-center gap-1">
+              <span>{progression.stageConfig.title}</span>
+              <span className="text-zinc-600">&bull;</span>
+              <span className="text-cyan-400/80 font-mono text-[10px]">{progression.totalXp} XP</span>
             </div>
           </div>
         </div>
 
-        {/* XP Progress Bar (Desktop) */}
-        <div className="hidden md:flex flex-col flex-1 max-w-xs mx-4">
+        {/* XP Progress Bar (Desktop & Tablet) */}
+        <div className="hidden sm:flex flex-col flex-1 max-w-xs mx-4">
           <div className="flex justify-between text-xs font-semibold mb-1 text-zinc-400">
-            <span>XP Progress</span>
-            <span className="text-flame-400">
-              {progression.currentLevelXp} / {progression.nextLevelXp} XP ({progression.levelProgressPercent}%)
+            <span className="flex items-center gap-1">
+              <Zap className="w-3 h-3 text-cyan-400" />
+              XP Progress
+            </span>
+            <span className="text-cyan-300 font-mono">
+              {progression.currentLevelXp} / {progression.nextLevelXp} ({progression.levelProgressPercent}%)
             </span>
           </div>
-          <div className="w-full h-2 bg-black/40 rounded-full overflow-hidden border border-white/10">
+          <div className="w-full h-2.5 bg-black/50 rounded-full overflow-hidden border border-white/10 p-0.5">
             <div
-              className="h-full bg-gradient-to-r from-flame-600 to-flame-400 transition-all duration-500 rounded-full shadow-[0_0_8px_rgba(255,122,0,0.5)]"
+              className="h-full bg-gradient-to-r from-cyan-600 via-cyan-400 to-cyan-300 transition-all duration-500 rounded-full shadow-[0_0_10px_rgba(0,173,216,0.6)]"
               style={{ width: `${progression.levelProgressPercent}%` }}
             />
           </div>
@@ -53,8 +58,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* User Account / Login Button */}
           {user ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-black/40 border border-white/10 text-xs text-zinc-300 backdrop-blur-md">
-              <User className="w-3.5 h-3.5 text-flame-400" />
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-black/40 border border-white/10 text-xs text-zinc-300 backdrop-blur-md">
+              <User className="w-3.5 h-3.5 text-cyan-400" />
               <span className="font-semibold text-white truncate max-w-[80px] sm:max-w-[120px]">{user.username}</span>
               <button
                 type="button"
@@ -69,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
             <button
               type="button"
               onClick={onOpenAuth}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-flame-600/20 border border-flame-500/40 text-flame-400 hover:bg-flame-600 hover:text-white text-xs font-bold transition-all shadow-md shadow-flame-600/10"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-cyan-600/20 border border-cyan-500/40 text-cyan-300 hover:bg-cyan-600 hover:text-white text-xs font-bold transition-all shadow-md shadow-cyan-600/10"
               title="Sign In / Sync Account"
             >
               <LogIn className="w-3.5 h-3.5" />
@@ -79,10 +84,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
 
           {/* Streak Freeze Badge */}
           <div
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-black/40 border border-white/10 text-xs font-medium text-zinc-300 backdrop-blur-md"
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-black/40 border border-white/10 text-xs font-semibold text-zinc-300 backdrop-blur-md"
             title="Available Streak Freezes"
           >
-            <Shield className="w-3.5 h-3.5 text-blue-400" />
+            <Shield className="w-3.5 h-3.5 text-cyan-400" />
             <span>{progression.availableFreezes}</span>
           </div>
 
@@ -90,8 +95,8 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
           <button
             type="button"
             onClick={triggerManualSync}
-            className={`p-1.5 sm:p-2 rounded-lg bg-black/40 border border-white/10 text-zinc-400 hover:text-white hover:border-flame-500/40 backdrop-blur-md transition-all ${
-              syncStatus === 'syncing' ? 'animate-spin text-flame-400' : syncStatus === 'success' ? 'text-green-400' : ''
+            className={`p-2 rounded-xl bg-black/40 border border-white/10 text-zinc-400 hover:text-white hover:border-cyan-500/40 backdrop-blur-md transition-all ${
+              syncStatus === 'syncing' ? 'animate-spin text-cyan-400' : syncStatus === 'success' ? 'text-emerald-400' : ''
             }`}
             title="Sync with Cloudflare R2"
           >
@@ -102,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
           <button
             type="button"
             onClick={onOpenSettings}
-            className="p-1.5 sm:p-2 rounded-lg bg-black/40 border border-white/10 text-zinc-400 hover:text-white hover:border-flame-500/40 backdrop-blur-md transition-colors"
+            className="p-2 rounded-xl bg-black/40 border border-white/10 text-zinc-400 hover:text-white hover:border-cyan-500/40 backdrop-blur-md transition-colors"
             title="Settings"
           >
             <SettingsIcon className="w-4 h-4" />
@@ -111,9 +116,9 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSettings, onOpenAuth }) =>
       </div>
 
       {/* Mobile XP Bar Underneath Header */}
-      <div className="md:hidden w-full h-1 bg-black/50 overflow-hidden">
+      <div className="sm:hidden w-full h-1 bg-black/50 overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-flame-600 to-flame-400 transition-all duration-300"
+          className="h-full bg-gradient-to-r from-cyan-600 via-cyan-400 to-cyan-300 transition-all duration-300"
           style={{ width: `${progression.levelProgressPercent}%` }}
         />
       </div>

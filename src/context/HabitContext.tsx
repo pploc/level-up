@@ -54,6 +54,7 @@ interface HabitContextValue {
   importJson: (jsonStr: string) => boolean;
   resetAllData: () => void;
   loadDemoData: () => void;
+  triggerShowcase: (message: string, subMessage: string, mood?: MascotMood, action?: MascotActionType, durationMs?: number) => void;
 }
 
 const HabitContext = createContext<HabitContextValue | null>(null);
@@ -493,7 +494,8 @@ export const HabitProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           }
         },
         resetAllData,
-        loadDemoData
+        loadDemoData,
+        triggerShowcase
       }}
     >
       {children}

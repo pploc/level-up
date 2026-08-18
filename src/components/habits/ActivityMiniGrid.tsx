@@ -14,7 +14,7 @@ export const ActivityMiniGrid: React.FC<ActivityMiniGridProps> = ({
   habitId,
   habitColor,
   logs,
-  weeksCount = 16,
+  weeksCount = 18,
   onSelectDate
 }) => {
   const [hovered, setHovered] = useState<{ date: string; completed: boolean; value: number } | null>(null);
@@ -51,13 +51,15 @@ export const ActivityMiniGrid: React.FC<ActivityMiniGridProps> = ({
   }, [habitId, logs, weeksCount]);
 
   return (
-    <div className="relative mt-3 pt-3 border-t border-obsidian-800">
+    <div className="relative mt-3 pt-3 border-t border-white/5">
       <div className="flex items-center justify-between mb-1.5 text-[11px] text-zinc-400">
-        <span className="font-mono">Activity History ({weeksCount} weeks)</span>
-        {hovered && (
-          <span className="font-mono text-white text-[10px]">
+        <span className="font-mono text-zinc-500">History Grid ({weeksCount}w)</span>
+        {hovered ? (
+          <span className="font-mono text-cyan-300 text-[10px] bg-black/50 px-2 py-0.5 rounded border border-white/10">
             {hovered.date}: {hovered.completed ? '✓ Completed' : 'Missed'}
           </span>
+        ) : (
+          <span className="text-[10px] text-zinc-500">Hover for dates</span>
         )}
       </div>
 
@@ -71,11 +73,11 @@ export const ActivityMiniGrid: React.FC<ActivityMiniGridProps> = ({
                 onClick={() => onSelectDate?.(day.date)}
                 onMouseEnter={() => setHovered({ date: day.date, completed: day.completed, value: day.value })}
                 onMouseLeave={() => setHovered(null)}
-                className="w-2.5 h-2.5 rounded-[2px] transition-all"
+                className="w-2.5 h-2.5 rounded-[2px] transition-all hover:scale-125"
                 style={{
-                  backgroundColor: day.completed ? habitColor : '#141414',
-                  border: day.completed ? `1px solid ${habitColor}` : '1px solid #1F1F1F',
-                  boxShadow: day.completed ? `0 0 4px ${habitColor}60` : 'none'
+                  backgroundColor: day.completed ? habitColor : 'rgba(20, 20, 20, 0.8)',
+                  border: day.completed ? `1px solid ${habitColor}` : '1px solid rgba(255, 255, 255, 0.06)',
+                  boxShadow: day.completed ? `0 0 6px ${habitColor}70` : 'none'
                 }}
                 aria-label={`${day.date}: ${day.completed ? 'Done' : 'Incomplete'}`}
               />

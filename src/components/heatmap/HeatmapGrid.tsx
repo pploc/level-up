@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHabits } from '../../context/HabitContext';
 import { computeHeatmapMatrix } from '../../utils/analyticsMath';
 import { HeatmapDayData } from '../../types/analytics';
+import { Calendar, Filter, Flame } from 'lucide-react';
 
 export const HeatmapGrid: React.FC = () => {
   const { habits, logs, setSelectedDate } = useHabits();
+  const [activeFilter, setActiveFilter] = useState<string>('all');
 
   const getCellColor = (level: number = 0, color?: string) => {
-    if (level === 0) return 'bg-[#141414]/70 border-[#262626]/50 hover:border-white/30';
+    if (level === 0) return 'bg-[#141414]/80 border-white/5 hover:border-cyan-400/40';
     if (color) return 'border-transparent';
     switch (level) {
-      case 1: return 'bg-[#4D1C0C] border-[#662610]';
-      case 2: return 'bg-[#8A2E0E] border-[#A83812]';
-      case 3: return 'bg-[#D84315] border-[#F4511E]';
-      case 4: return 'bg-[#FF7A00] border-[#FF9100] shadow-[0_0_8px_rgba(255,122,0,0.6)]';
-      default: return 'bg-[#141414]/70 border-[#262626]/50';
+      case 1: return 'bg-[#004D40] border-[#006064]';
+      case 2: return 'bg-[#00838F] border-[#0097A7]';
+      case 3: return 'bg-[#00ADD8] border-[#29B6F6] shadow-[0_0_6px_rgba(0,173,216,0.4)]';
+      case 4: return 'bg-[#00E5FF] border-[#80DEEA] shadow-[0_0_10px_rgba(0,229,255,0.8)]';
+      default: return 'bg-[#141414]/80 border-white/5';
     }
   };
 
@@ -66,7 +68,8 @@ export const HeatmapGrid: React.FC = () => {
                 const bgStyle = isCustom
                   ? {
                       backgroundColor: `${customColor}${level === 4 ? '' : level === 3 ? 'CC' : level === 2 ? '80' : '40'}`,
-                      borderColor: customColor
+                      borderColor: customColor,
+                      boxShadow: level >= 3 ? `0 0 6px ${customColor}` : 'none'
                     }
                   : undefined;
 
@@ -76,8 +79,8 @@ export const HeatmapGrid: React.FC = () => {
                     type="button"
                     onClick={() => setSelectedDate(day.date)}
                     style={bgStyle}
-                    className={`w-3 h-3 rounded-[2px] border transition-all duration-150 ${getCellColor(level, customColor)}`}
-                    title={`${day.date}: ${day.dayData?.count ?? 0} completed`}
+                    className={`w-3 h-3 rounded-[2px] border transition-all duration-150 hover:scale-125 ${getCellColor(level, customColor)}`}
+                    title={`${day.date}: ${day.dayData?.count ?? 0} habits completed`}
                   />
                 );
               })}
@@ -89,17 +92,26 @@ export const HeatmapGrid: React.FC = () => {
   };
 
   const activeHabits = habits.filter(h => !h.archived);
+  const filteredHabits = activeFilter === 'all'
+    ? activeHabits
+    : activeHabits.filter(h => h.id === activeFilter);
 
   return (
     <div className="space-y-6">
       {/* Overall Aggregated Heatmap */}
-      <div className="p-5 glass-panel rounded-2xl space-y-3">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="font-bold text-white text-base">Combined Activity Grid</h2>
-            <p className="text-xs text-zinc-400">Total daily habit completions (52 weeks)</p>
+      <div className="p-5 glass-panel rounded-2xl border border-cyan-500/30 space-y-4 shadow-xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-cyan-600/20 border border-cyan-500/30 rounded-xl text-cyan-400">
+              <Calendar className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="font-bold text-white text-base sm:text-lg">Full Year Contribution Matrix</h2>
+              <p className="text-xs text-zinc-400">GitHub-style 52-week activity log across all habits</p>
+            </div>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-zinc-400">
+
+          <div className="flex items-center gap-1.5 text-xs text-zinc-400 bg-black/40 px-3 py-1.5 rounded-xl border border-white/10 self-start sm:self-auto">
             <span className="text-[10px]">Less</span>
             {[0, 1, 2, 3, 4].map(l => (
               <span key={l} className={`w-3 h-3 rounded-[2px] border ${getCellColor(l)}`} />
@@ -111,28 +123,66 @@ export const HeatmapGrid: React.FC = () => {
         {render52WeekMatrix()}
       </div>
 
-      {/* Individual Grid Per Activity / Habit */}
+      {/* Filter Tabs for Individual Habits */}
       <div className="space-y-4">
-        <h3 className="font-bold text-white text-sm tracking-wide uppercase text-zinc-400">
-          Individual Habit Grids
-        </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <h3 className="font-bold text-white text-sm tracking-wider uppercase text-zinc-400 flex items-center gap-1.5">
+            <Filter className="w-4 h-4 text-cyan-400" />
+            Individual Habit Breakdown
+          </h3>
 
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 custom-scrollbar">
+            <button
+              type="button"
+              onClick={() => setActiveFilter('all')}
+              className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
+                activeFilter === 'all'
+                  ? 'bg-cyan-600 text-white border border-cyan-400'
+                  : 'bg-black/30 text-zinc-400 hover:text-white border border-white/5'
+              }`}
+            >
+              Show All ({activeHabits.length})
+            </button>
+            {activeHabits.map(h => (
+              <button
+                key={h.id}
+                type="button"
+                onClick={() => setActiveFilter(h.id)}
+                className={`px-3 py-1 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                  activeFilter === h.id
+                    ? 'bg-cyan-600 text-white border border-cyan-400'
+                    : 'bg-black/30 text-zinc-400 hover:text-white border border-white/5'
+                }`}
+              >
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: h.color }} />
+                <span>{h.title}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Individual Grid Cards */}
         <div className="grid grid-cols-1 gap-4">
-          {activeHabits.map((habit) => (
-            <div key={habit.id} className="p-4 glass-card rounded-2xl space-y-2">
+          {filteredHabits.map((habit) => (
+            <div key={habit.id} className="p-4 sm:p-5 glass-card rounded-2xl space-y-3 hover:border-cyan-500/30 transition-all">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: habit.color }} />
-                  <span className="font-bold text-white text-sm">{habit.title}</span>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: habit.color }} />
+                  <span className="font-bold text-white text-sm sm:text-base">{habit.title}</span>
                   <span
-                    className="text-[10px] px-1.5 py-0.2 rounded font-mono uppercase"
-                    style={{ backgroundColor: `${habit.color}25`, color: habit.color }}
+                    className="text-[10px] px-2 py-0.5 rounded font-mono font-bold uppercase border"
+                    style={{
+                      backgroundColor: `${habit.color}15`,
+                      color: habit.color,
+                      borderColor: `${habit.color}30`
+                    }}
                   >
                     {habit.category}
                   </span>
                 </div>
-                <div className="text-xs text-flame-400 font-bold">
-                  🔥 {habit.streak.currentStreak}d streak (Max: {habit.streak.longestStreak}d)
+                <div className="text-xs text-orange-400 font-bold flex items-center gap-1">
+                  <Flame className="w-3.5 h-3.5 fill-orange-400" />
+                  <span>{habit.streak.currentStreak}d streak (Max: {habit.streak.longestStreak}d)</span>
                 </div>
               </div>
 
