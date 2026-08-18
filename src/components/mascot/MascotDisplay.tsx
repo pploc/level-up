@@ -38,8 +38,8 @@ export const MascotDisplay: React.FC<MascotDisplayProps> = ({
 
   const moodAnimation = useMemo(() => {
     switch (mood) {
-      case 'happy': return 'animate-mascot-happy filter drop-shadow-[0_0_15px_rgba(255,122,0,0.8)]';
-      case 'celebrating': return 'animate-mascot-celebrate filter drop-shadow-[0_0_25px_rgba(255,87,34,1)]';
+      case 'happy': return 'animate-mascot-happy filter drop-shadow-[0_0_15px_rgba(0,173,216,0.8)]';
+      case 'celebrating': return 'animate-mascot-celebrate filter drop-shadow-[0_0_25px_rgba(0,229,255,1)]';
       case 'sad': return 'translate-y-1 opacity-75 grayscale-[40%]';
       case 'determined': return 'animate-pulse-glow scale-105';
       default: return 'animate-idle-float';
@@ -56,8 +56,8 @@ export const MascotDisplay: React.FC<MascotDisplayProps> = ({
         className="absolute inset-0 rounded-full blur-xl opacity-40 group-hover:opacity-70 transition-opacity pointer-events-none"
         style={{
           background: stage === 'ascendant'
-            ? 'radial-gradient(circle, #FF7A00 0%, #E040FB 60%, transparent 80%)'
-            : 'radial-gradient(circle, #FF5722 0%, #FF9800 50%, transparent 80%)'
+            ? 'radial-gradient(circle, #00E5FF 0%, #00ADD8 60%, transparent 80%)'
+            : 'radial-gradient(circle, #00ADD8 0%, #007D9C 50%, transparent 80%)'
         }}
       />
 

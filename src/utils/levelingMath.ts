@@ -7,7 +7,7 @@ export const STAGE_CONFIGS: Record<MascotStage, MascotStageConfig> = {
     title: 'Coffee Novice',
     minLevel: 1,
     maxLevel: 4,
-    description: 'A cheerful orange Go Gopher starting the day with fresh Java coffee.',
+    description: 'A cheerful Go Gopher starting the day with fresh Java coffee.',
     glowColor: '#00ADD8',
     accentColor: '#29B6F6'
   },

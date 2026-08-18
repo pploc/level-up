@@ -15,9 +15,9 @@ export const AscendantSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mo
           <stop offset="100%" stopColor="#000000" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="gopherBodyGradAscendant" x1="50" y1="10" x2="50" y2="82" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFA726" />
-          <stop offset="45%" stopColor="#FF7A00" />
-          <stop offset="100%" stopColor="#D84315" />
+          <stop offset="0%" stopColor="#7FD5EA" />
+          <stop offset="40%" stopColor="#00ADD8" />
+          <stop offset="100%" stopColor="#007D9C" />
         </linearGradient>
       </defs>
 
@@ -38,10 +38,10 @@ export const AscendantSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mo
       <circle cx="50" cy="12" r="2.5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1" />
 
       {/* Gopher Ears */}
-      <circle cx="25" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
-      <circle cx="25" cy="18" r="4.5" fill="#FFE082" />
-      <circle cx="75" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
-      <circle cx="75" cy="18" r="4.5" fill="#FFE082" />
+      <circle cx="25" cy="18" r="8.5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.5" />
+      <circle cx="25" cy="18" r="4.5" fill="#BFE6FF" />
+      <circle cx="75" cy="18" r="8.5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.5" />
+      <circle cx="75" cy="18" r="4.5" fill="#BFE6FF" />
 
       {/* Gopher Body */}
       <path
@@ -101,8 +101,8 @@ export const AscendantSvg: React.FC<{ mood: MascotMood; size?: number }> = ({ mo
       <path d="M 56 50 Q 60 44 55 39" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" fill="none" />
 
       {/* Paws */}
-      <circle cx="31" cy="65" r="5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.4" />
-      <circle cx="69" cy="65" r="5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.4" />
+      <circle cx="31" cy="65" r="5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.4" />
+      <circle cx="69" cy="65" r="5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.4" />
     </svg>
   );
 };

@@ -14,9 +14,9 @@ export const SolarChampionSvg: React.FC<{ mood: MascotMood; size?: number }> = (
           <stop offset="100%" stopColor="#004D40" stopOpacity="0" />
         </radialGradient>
         <linearGradient id="gopherBodyGradSolar" x1="50" y1="10" x2="50" y2="82" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFA726" />
-          <stop offset="45%" stopColor="#FF7A00" />
-          <stop offset="100%" stopColor="#D84315" />
+          <stop offset="0%" stopColor="#7FD5EA" />
+          <stop offset="40%" stopColor="#00ADD8" />
+          <stop offset="100%" stopColor="#007D9C" />
         </linearGradient>
       </defs>
 
@@ -32,10 +32,10 @@ export const SolarChampionSvg: React.FC<{ mood: MascotMood; size?: number }> = (
       <path d="M 38 12 L 44 4 L 50 9 L 56 4 L 62 12 Z" fill="#00E5FF" stroke="#FFFFFF" strokeWidth="1" />
 
       {/* Gopher Ears */}
-      <circle cx="25" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
-      <circle cx="25" cy="18" r="4.5" fill="#FFE082" />
-      <circle cx="75" cy="18" r="8.5" fill="#FF7A00" stroke="#FFFFFF" strokeWidth="1.5" />
-      <circle cx="75" cy="18" r="4.5" fill="#FFE082" />
+      <circle cx="25" cy="18" r="8.5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.5" />
+      <circle cx="25" cy="18" r="4.5" fill="#BFE6FF" />
+      <circle cx="75" cy="18" r="8.5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.5" />
+      <circle cx="75" cy="18" r="4.5" fill="#BFE6FF" />
 
       {/* Gopher Body */}
       <path
@@ -95,8 +95,8 @@ export const SolarChampionSvg: React.FC<{ mood: MascotMood; size?: number }> = (
       <path d="M 56 50 Q 60 44 55 39" stroke="#80DEEA" strokeWidth="1.8" strokeLinecap="round" fill="none" />
 
       {/* Paws */}
-      <circle cx="31" cy="65" r="5" fill="#FF7A00" stroke="#80DEEA" strokeWidth="1.4" />
-      <circle cx="69" cy="65" r="5" fill="#FF7A00" stroke="#80DEEA" strokeWidth="1.4" />
+      <circle cx="31" cy="65" r="5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.4" />
+      <circle cx="69" cy="65" r="5" fill="#00ADD8" stroke="#FFFFFF" strokeWidth="1.4" />
     </svg>
   );
 };

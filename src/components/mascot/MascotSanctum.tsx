@@ -69,7 +69,7 @@ export const MascotSanctum: React.FC = () => {
                 key={stageKey}
                 className={`p-4 rounded-xl border flex flex-col items-center text-center transition-all ${
                   isCurrent
-                    ? 'bg-flame-600/20 border-flame-500 shadow-[0_0_15px_rgba(255,87,34,0.3)] backdrop-blur-md'
+                    ? 'bg-flame-600/20 border-flame-500 shadow-[0_0_15px_rgba(0,173,216,0.3)] backdrop-blur-md'
                     : isUnlocked
                     ? 'glass-subcard'
                     : 'bg-black/40 border-white/5 opacity-40 grayscale backdrop-blur-sm'

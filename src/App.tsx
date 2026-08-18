@@ -18,10 +18,10 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-game-grid text-white flex flex-col relative overflow-hidden">
-      {/* Ambient Acrylic Flame Aura Glows */}
-      <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-flame-600/25 via-flame-500/10 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed top-1/3 -left-32 w-80 h-80 bg-flame-600/15 rounded-full blur-3xl pointer-events-none z-0" />
-      <div className="fixed bottom-10 -right-32 w-96 h-96 bg-flame-500/15 rounded-full blur-3xl pointer-events-none z-0" />
+      {/* Ambient Acrylic Cyan Glows */}
+      <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-gradient-to-b from-cyan-600/25 via-cyan-500/10 to-transparent rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="fixed top-1/3 -left-32 w-80 h-80 bg-cyan-600/15 rounded-full blur-3xl pointer-events-none z-0" />
+      <div className="fixed bottom-10 -right-32 w-96 h-96 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none z-0" />
 
       {/* Center Screen Mascot Celebration Showcase */}
       {showcaseEvent && (

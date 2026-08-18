@@ -39,11 +39,43 @@ export default {
         'mascot-wiggle': 'mascotWiggle 0.4s ease-in-out infinite',
         'center-hero': 'centerHero 1.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'fade-in': 'fadeIn 0.25s ease-out forwards',
+        'push-up': 'pushUp 0.8s ease-in-out infinite alternate',
+        'dumbbell-lift': 'dumbbellLift 1s ease-in-out infinite alternate',
+        'barbell-bob': 'barbellBob 0.6s ease-in-out infinite alternate',
+        'meditate-float': 'meditateFloat 2.5s ease-in-out infinite alternate',
+        'typing-paw-left': 'typingPaw 0.2s ease-in-out infinite alternate',
+        'typing-paw-right': 'typingPaw 0.2s ease-in-out infinite alternate 0.1s',
+        'chug-tilt': 'chugTilt 0.8s ease-in-out infinite alternate',
       },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
+        },
+        pushUp: {
+          '0%': { transform: 'scale(1) translateY(0px)' },
+          '100%': { transform: 'scale(0.92, 0.85) translateY(12px)' },
+        },
+        dumbbellLift: {
+          '0%': { transform: 'translateY(6px) scale(0.98)' },
+          '100%': { transform: 'translateY(-6px) scale(1.02)' },
+        },
+        barbellBob: {
+          '0%': { transform: 'translateY(0px)' },
+          '100%': { transform: 'translateY(-4px)' },
+        },
+        meditateFloat: {
+          '0%': { transform: 'translateY(0px) rotate(0deg)' },
+          '50%': { transform: 'translateY(-8px) rotate(1deg)' },
+          '100%': { transform: 'translateY(0px) rotate(-1deg)' },
+        },
+        typingPaw: {
+          '0%': { transform: 'translateY(0px)' },
+          '100%': { transform: 'translateY(-3px)' },
+        },
+        chugTilt: {
+          '0%': { transform: 'rotate(-4deg)' },
+          '100%': { transform: 'rotate(6deg)' },
         },
         centerHero: {
           '0%': { opacity: '0', transform: 'scale(0.3) translateY(60px) rotate(-15deg)' },
